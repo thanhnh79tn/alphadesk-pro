@@ -6,6 +6,7 @@
   <title>AlphaDeskPro — Hệ Thống Phân Tích Đa Tầng Auto 24/7</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
   <style>
     body { background-color: #0b1120; color: #e2e8f0; font-family: 'Inter', system-ui, sans-serif; }
     .card { background-color: #111827; border: 1px solid #1e293b; border-radius: 12px; }
@@ -31,7 +32,7 @@
     <button onclick="loadData()" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-sm font-medium border border-slate-700 text-sky-300">🔄 Cập Nhật Dữ Liệu Mới Nhất</button>
   </div>
 
-  <!-- Thanh điều hướng 3 tab trực quan -->
+  <!-- Thanh điều hướng 3 tab -->
   <div class="flex flex-wrap gap-2 mb-5">
     <button id="btn-tab1" onclick="switchTab(1)" class="tab-active px-4 py-2 rounded-lg text-sm font-semibold">1. Tổng Quan & Tín Hiệu Vào Lệnh</button>
     <button id="btn-tab2" onclick="switchTab(2)" class="tab-inactive px-4 py-2 rounded-lg text-sm font-semibold">2. Trạm Biểu Đồ Kỹ Thuật Trực Tiếp</button>
@@ -44,7 +45,7 @@
       <span class="font-semibold text-white">🕒 Lịch Tự Động 24/7:</span>
       <span class="px-2.5 py-1 rounded-md bg-emerald-950/80 text-emerald-300 border border-emerald-800 text-xs">08:00 Sáng (Phiên Á & HOSE)</span>
       <span class="px-2.5 py-1 rounded-md bg-sky-950/80 text-sky-300 border border-sky-800 text-xs">20:00 Tối (Phiên Mỹ & XAU/USD)</span>
-      <span id="last-updated" class="text-xs text-slate-400 ml-2">Đang đồng bộ từ Supabase...</span>
+      <span id="last-updated" class="text-xs text-emerald-400 ml-2 font-medium">Đang đồng bộ từ Supabase...</span>
     </div>
     <div class="text-xs text-slate-400">
       Đồng hồ hệ thống: <span id="clock" class="px-2 py-1 rounded bg-slate-900 text-sky-400 font-mono font-bold">--:--:--</span>
@@ -53,7 +54,6 @@
 
   <!-- TAB 1: TỔNG QUAN & TÍN HIỆU -->
   <div id="tab-1">
-    <!-- Quản trị vốn -->
     <div class="card p-5 mb-5">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-sm font-bold text-white">🛡️ Quản Trị Vốn & Tính Khối Lượng Tự Động</h2>
@@ -79,7 +79,6 @@
       </div>
     </div>
 
-    <!-- Thẻ thống kê nhanh -->
     <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-5">
       <div class="card p-4">
         <div class="text-xs text-slate-400">Danh mục theo dõi</div>
@@ -108,7 +107,6 @@
       </div>
     </div>
 
-    <!-- Bảng tín hiệu chính -->
     <div class="card p-5 overflow-x-auto mb-5">
       <div class="mb-4">
         <h2 class="text-base font-bold text-white">🎯 Bảng Điểm Vào Lệnh Cụ Thể & Hợp Lưu Đa Phương Pháp</h2>
@@ -135,7 +133,6 @@
       </table>
     </div>
 
-    <!-- Thẻ phân tích chuyên sâu từng mã -->
     <h2 class="text-base font-bold text-white mb-3">🔍 Bóc Tách Cấu Trúc Đa Tầng Từng Mã (Elliott • SMC • Wyckoff • Fibo)</h2>
     <div id="detail-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
   </div>
@@ -144,17 +141,20 @@
   <div id="tab-2" class="hidden">
     <div class="card p-4">
       <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-        <h2 class="text-base font-bold text-white">📈 Biểu Đồ Kỹ Thuật Trực Tiếp</h2>
+        <div>
+          <h2 id="chart-title" class="text-base font-bold text-white">📈 Biểu Đồ Kỹ Thuật Trực Tiếp — HPG</h2>
+          <p class="text-xs text-slate-400">Tự động vẽ kèm đường Entry, Cắt lỗ (SL) và Chốt lời (TP) từ hệ thống phân tích</p>
+        </div>
         <div class="flex flex-wrap gap-2">
-          <button onclick="loadChart('OANDA:XAUUSD')" class="px-3 py-1.5 rounded bg-slate-800 hover:bg-blue-600 text-xs font-semibold">XAU/USD</button>
-          <button onclick="loadChart('HOSE:VNINDEX')" class="px-3 py-1.5 rounded bg-slate-800 hover:bg-blue-600 text-xs font-semibold">VN-INDEX</button>
-          <button onclick="loadChart('HOSE:FPT')" class="px-3 py-1.5 rounded bg-slate-800 hover:bg-blue-600 text-xs font-semibold">FPT</button>
-          <button onclick="loadChart('HOSE:HPG')" class="px-3 py-1.5 rounded bg-slate-800 hover:bg-blue-600 text-xs font-semibold">HPG</button>
-          <button onclick="loadChart('HOSE:VCB')" class="px-3 py-1.5 rounded bg-slate-800 hover:bg-blue-600 text-xs font-semibold">VCB</button>
-          <button onclick="loadChart('HOSE:VIC')" class="px-3 py-1.5 rounded bg-slate-800 hover:bg-blue-600 text-xs font-semibold">VIC</button>
+          <button onclick="openSymbolChart('XAU/USD')" class="px-3 py-1.5 rounded bg-slate-800 hover:bg-blue-600 text-xs font-semibold">XAU/USD</button>
+          <button onclick="openSymbolChart('VN-INDEX')" class="px-3 py-1.5 rounded bg-slate-800 hover:bg-blue-600 text-xs font-semibold">VN-INDEX</button>
+          <button onclick="openSymbolChart('FPT')" class="px-3 py-1.5 rounded bg-slate-800 hover:bg-blue-600 text-xs font-semibold">FPT</button>
+          <button onclick="openSymbolChart('HPG')" class="px-3 py-1.5 rounded bg-slate-800 hover:bg-blue-600 text-xs font-semibold">HPG</button>
+          <button onclick="openSymbolChart('VCB')" class="px-3 py-1.5 rounded bg-slate-800 hover:bg-blue-600 text-xs font-semibold">VCB</button>
+          <button onclick="openSymbolChart('VIC')" class="px-3 py-1.5 rounded bg-slate-800 hover:bg-blue-600 text-xs font-semibold">VIC</button>
         </div>
       </div>
-      <div id="tv-chart" class="w-full h-[540px] rounded-lg overflow-hidden border border-slate-800"></div>
+      <div id="tv-chart" class="w-full h-[540px] rounded-lg overflow-hidden border border-slate-800 bg-[#0b1120]"></div>
     </div>
   </div>
 
@@ -198,27 +198,61 @@
       document.getElementById("btn-tab" + i).className = (i === n ? "tab-active" : "tab-inactive") + " px-4 py-2 rounded-lg text-sm font-semibold";
     });
     if (n === 2 && !document.getElementById("tv-chart").innerHTML) {
-      loadChart("OANDA:XAUUSD");
+      openSymbolChart("HPG");
     }
   }
 
-  function openSymbolChart(sym) {
-    const map = {
-      "XAU/USD": "OANDA:XAUUSD",
-      "VN-INDEX": "HOSE:VNINDEX",
-      "FPT": "HOSE:FPT",
-      "HPG": "HOSE:HPG",
-      "VCB": "HOSE:VCB",
-      "VIC": "HOSE:VIC"
-    };
+  async function openSymbolChart(sym) {
     switchTab(2);
-    loadChart(map[sym] || "OANDA:XAUUSD");
-  }
+    document.getElementById("chart-title").innerText = `📈 Biểu Đồ Kỹ Thuật Trực Tiếp — ${sym}`;
+    const container = document.getElementById("tv-chart");
 
-  function loadChart(tvSymbol) {
-    document.getElementById("tv-chart").innerHTML = `
-      <iframe src="https://s.tradingview.com/widgetembed/?frameElementId=tv&symbol=${encodeURIComponent(tvSymbol)}&interval=D&hidesidetoolbar=0&symboledit=1&saveimage=0&toolbarbg=0b1120&theme=dark&style=1&timezone=Asia%2FHo_Chi_Minh&withdateranges=1&studies=MASimple%40tv-basicstudies%1FBB%40tv-basicstudies"
-        style="width:100%;height:100%;border:0;"></iframe>`;
+    if (sym === "XAU/USD") {
+      container.innerHTML = `
+        <iframe src="https://s.tradingview.com/widgetembed/?frameElementId=tv&symbol=OANDA%3AXAUUSD&interval=D&hidesidetoolbar=0&symboledit=1&saveimage=0&toolbarbg=0b1120&theme=dark&style=1&timezone=Asia%2FHo_Chi_Minh&withdateranges=1&studies=MASimple%40tv-basicstudies"
+          style="width:100%;height:100%;border:0;"></iframe>`;
+      return;
+    }
+
+    container.innerHTML = `<div class="flex items-center justify-center h-full text-sm text-slate-400">Đang tải dữ liệu nến thị trường thực tế cho ${sym}...</div>`;
+    try {
+      const to = Math.floor(Date.now() / 1000);
+      const from = to - 180 * 86400;
+      const url = `https://dchart-api.vndirect.com.vn/dchart/history?resolution=D&symbol=${encodeURIComponent(sym)}&from=${from}&to=${to}`;
+      const res = await fetch(url);
+      const json = await res.json();
+
+      container.innerHTML = "";
+      const chart = LightweightCharts.createChart(container, {
+        width: container.clientWidth,
+        height: 540,
+        layout: { background: { color: "#0b1120" }, textColor: "#cbd5e1" },
+        grid: { vertLines: { color: "#1e293b" }, horzLines: { color: "#1e293b" } },
+        timeScale: { borderColor: "#334155" }
+      });
+
+      const candleSeries = chart.addCandlestickSeries({
+        upColor: "#10b981", downColor: "#ef4444", borderVisible: false,
+        wickUpColor: "#10b981", wickDownColor: "#ef4444"
+      });
+
+      const candles = [];
+      for (let i = 0; i < json.t.length; i++) {
+        const d = new Date(json.t[i] * 1000).toISOString().slice(0, 10);
+        candles.push({ time: d, open: json.o[i], high: json.h[i], low: json.l[i], close: json.c[i] });
+      }
+      candleSeries.setData(candles);
+
+      const sig = latestRows.find(x => x.symbol === sym);
+      if (sig) {
+        candleSeries.createPriceLine({ price: sig.entry_price, color: "#38bdf8", lineWidth: 2, lineStyle: 2, title: "ENTRY" });
+        candleSeries.createPriceLine({ price: sig.stop_loss, color: "#f43f5e", lineWidth: 2, lineStyle: 2, title: "SL" });
+        candleSeries.createPriceLine({ price: sig.take_profit, color: "#10b981", lineWidth: 2, lineStyle: 2, title: "TP" });
+      }
+      chart.timeScale().fitContent();
+    } catch (e) {
+      container.innerHTML = `<div class="flex items-center justify-center h-full text-sm text-amber-400">Không tải được dữ liệu nến cho ${sym}. Vui lòng thử lại sau ít phút.</div>`;
+    }
   }
 
   async function loadData() {
@@ -229,6 +263,7 @@
       .limit(60);
 
     if (error) {
+      document.getElementById("last-updated").className = "text-xs text-rose-400 ml-2";
       document.getElementById("last-updated").innerText = "Lỗi kết nối Supabase: " + error.message;
       return;
     }
@@ -240,9 +275,12 @@
     });
     latestRows = Array.from(map.values());
 
+    document.getElementById("last-updated").className = "text-xs text-emerald-400 ml-2 font-medium";
     if (latestRows.length > 0 && latestRows[0].created_at) {
       const dt = new Date(latestRows[0].created_at).toLocaleString("vi-VN");
-      document.getElementById("last-updated").innerText = "Phiên cập nhật gần nhất: " + dt;
+      document.getElementById("last-updated").innerText = "Đã đồng bộ dữ liệu thật (" + dt + ")";
+    } else {
+      document.getElementById("last-updated").innerText = "Đã kết nối Supabase (Chưa có bản ghi mới)";
     }
     renderTable();
     renderHistory();
