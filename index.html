@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AlphaDeskPro V4.0 — Chứng Khoán Việt & Forex Realtime</title>
+  <title>AlphaDeskPro V4.1 — Chứng Khoán Việt, Forex, Bitcoin & USOIL Realtime</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
   <style>
@@ -24,10 +24,10 @@
       <h1 class="text-xl font-bold text-white flex items-center gap-2">
         AlphaDesk<span class="text-sky-400">Pro</span>
         <span class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-700 flex items-center gap-1.5">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 live-dot"></span> V4.0 VN STOCK + FOREX LIVE
+          <span class="w-2 h-2 rounded-full bg-emerald-400 live-dot"></span> V4.1 ALL-MARKET LIVE
         </span>
       </h1>
-      <p class="text-xs text-slate-400">Phân Tích & Tư Vấn Realtime (3s/lần): Chứng Khoán Việt Nam • Forex • Vàng • Crypto</p>
+      <p class="text-xs text-slate-400">Tư Vấn Vào Lệnh & Báo Cáo Lãi/Lỗ Realtime (3s/lần): CK Việt • Forex • Vàng • Dầu USOIL • Bitcoin</p>
     </div>
     <div class="flex items-center gap-3 text-xs text-slate-400">
       <button id="btn-live-toggle" onclick="toggleRealtime()" class="px-3 py-1.5 rounded-lg bg-emerald-950 text-emerald-300 border border-emerald-700 font-bold cursor-pointer">
@@ -39,7 +39,7 @@
 
   <!-- Quản trị vốn -->
   <div class="card p-4 mb-5 grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
-    <div><label class="text-[11px] text-slate-400">Vốn Forex / Vàng ($)</label><input id="cap-fx" type="number" value="10000" onchange="recalc()" class="inp font-mono text-sm"></div>
+    <div><label class="text-[11px] text-slate-400">Vốn Forex / Vàng / BTC ($)</label><input id="cap-fx" type="number" value="10000" onchange="recalc()" class="inp font-mono text-sm"></div>
     <div><label class="text-[11px] text-slate-400">Vốn CK Việt Nam (đ)</label><input id="cap-vn" type="number" value="500000000" onchange="recalc()" class="inp font-mono text-sm"></div>
     <div><label class="text-[11px] text-slate-400">Rủi ro / Lệnh (%)</label><input id="risk-pct" type="number" step="0.1" value="1.5" onchange="recalc()" class="inp font-mono text-sm text-amber-400"></div>
     <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 flex justify-between text-xs">
@@ -49,29 +49,30 @@
 
   <!-- Ô nhập mã phân tích -->
   <div class="card p-5 mb-5 border-blue-900/60">
-    <h2 class="text-base font-bold text-white mb-2">🎯 Nhập Mã Chứng Khoán Việt Hoặc Cặp Tiền Forex / Vàng</h2>
+    <h2 class="text-base font-bold text-white mb-2">🎯 Nhập Mã Tài Sản Muốn Tham Gia Giao Dịch</h2>
     <div class="flex flex-col sm:flex-row gap-3 mb-3">
-      <input id="sym-inp" type="text" value="EUR/USD" placeholder="VD: EUR/USD, GBP/USD, USD/JPY, XAU/USD, HPG, FPT, SSI..." onkeydown="if(event.key==='Enter') analyze()" class="inp font-mono text-base font-bold uppercase">
+      <input id="sym-inp" type="text" value="BTC/USD" placeholder="VD: BTC/USD, USOIL, XAU/USD, EUR/USD, MBB, TCB, VCB, HPG..." onkeydown="if(event.key==='Enter') analyze()" class="inp font-mono text-base font-bold uppercase">
       <button onclick="analyze()" class="px-6 py-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm whitespace-nowrap cursor-pointer">🚀 Phân Tích & Theo Dõi Live</button>
     </div>
     <div class="space-y-2 text-xs">
       <div class="flex flex-wrap items-center gap-1.5">
-        <span class="text-amber-400 font-semibold w-28">Forex & Vàng:</span>
+        <span class="text-amber-400 font-semibold w-32">Quốc tế & Crypto:</span>
+        <button onclick="pick('BTC/USD')" class="px-2.5 py-1 rounded bg-orange-950/80 hover:bg-orange-800 text-orange-300 border border-orange-700/70 font-semibold">Bitcoin (BTC/USD)</button>
+        <button onclick="pick('USOIL')" class="px-2.5 py-1 rounded bg-purple-950/80 hover:bg-purple-800 text-purple-300 border border-purple-700/70 font-semibold">USOIL (Dầu WTI)</button>
+        <button onclick="pick('XAU/USD')" class="px-2.5 py-1 rounded bg-yellow-950/80 hover:bg-yellow-800 text-yellow-300 border border-yellow-700/70 font-semibold">XAU/USD (Vàng)</button>
         <button onclick="pick('EUR/USD')" class="px-2.5 py-1 rounded bg-amber-950/70 hover:bg-amber-800 text-amber-300 border border-amber-800/60 font-semibold">EUR/USD</button>
         <button onclick="pick('GBP/USD')" class="px-2.5 py-1 rounded bg-amber-950/70 hover:bg-amber-800 text-amber-300 border border-amber-800/60 font-semibold">GBP/USD</button>
         <button onclick="pick('USD/JPY')" class="px-2.5 py-1 rounded bg-amber-950/70 hover:bg-amber-800 text-amber-300 border border-amber-800/60 font-semibold">USD/JPY</button>
-        <button onclick="pick('AUD/USD')" class="px-2.5 py-1 rounded bg-amber-950/70 hover:bg-amber-800 text-amber-300 border border-amber-800/60 font-semibold">AUD/USD</button>
-        <button onclick="pick('USD/CAD')" class="px-2.5 py-1 rounded bg-amber-950/70 hover:bg-amber-800 text-amber-300 border border-amber-800/60 font-semibold">USD/CAD</button>
-        <button onclick="pick('XAU/USD')" class="px-2.5 py-1 rounded bg-yellow-950/80 hover:bg-yellow-800 text-yellow-300 border border-yellow-700 font-semibold">XAU/USD (Vàng)</button>
-        <button onclick="pick('BTC/USD')" class="px-2.5 py-1 rounded bg-orange-950/70 hover:bg-orange-800 text-orange-300 border border-orange-800/60 font-semibold">BTC/USD</button>
       </div>
       <div class="flex flex-wrap items-center gap-1.5">
-        <span class="text-sky-400 font-semibold w-28">Chứng khoán VN:</span>
+        <span class="text-sky-400 font-semibold w-32">Chứng khoán VN:</span>
+        <button onclick="pick('MBB')" class="px-2.5 py-1 rounded bg-indigo-950/80 hover:bg-indigo-700 text-indigo-200 border border-indigo-700/70 font-semibold">MB (MBB)</button>
+        <button onclick="pick('TCB')" class="px-2.5 py-1 rounded bg-indigo-950/80 hover:bg-indigo-700 text-indigo-200 border border-indigo-700/70 font-semibold">Techcombank (TCB)</button>
+        <button onclick="pick('VCB')" class="px-2.5 py-1 rounded bg-indigo-950/80 hover:bg-indigo-700 text-indigo-200 border border-indigo-700/70 font-semibold">Vietcombank (VCB)</button>
         <button onclick="pick('HPG')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-blue-600 text-sky-300 font-semibold">HPG</button>
         <button onclick="pick('FPT')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-blue-600 text-sky-300 font-semibold">FPT</button>
         <button onclick="pick('SSI')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-blue-600 text-sky-300 font-semibold">SSI</button>
         <button onclick="pick('MWG')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-blue-600 text-sky-300 font-semibold">MWG</button>
-        <button onclick="pick('VCB')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-blue-600 text-sky-300 font-semibold">VCB</button>
         <button onclick="pick('VNINDEX')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-blue-600 text-sky-300 font-semibold">VN-INDEX</button>
       </div>
     </div>
@@ -193,11 +194,11 @@
     <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
       <div>
         <h2 class="text-base font-bold text-white">📑 Sổ Đối Soát Hiệu Quả Tư Vấn (Cập Nhật Lãi/Lỗ Tự Động)</h2>
-        <p class="text-xs text-slate-400">Đối chiếu giá realtime với điểm vào tư vấn cho cả Forex, Vàng và Chứng khoán Việt</p>
+        <p class="text-xs text-slate-400">Đối chiếu giá realtime với điểm vào tư vấn cho cả Bitcoin, USOIL, Forex, Vàng và Chứng khoán Việt</p>
       </div>
       <div class="flex items-center gap-4 text-xs">
         <div class="px-3 py-1.5 rounded bg-slate-900 border border-slate-800">Tổng P&L CK VN: <span id="sum-vn" class="font-mono font-bold text-emerald-400">0 đ</span></div>
-        <div class="px-3 py-1.5 rounded bg-slate-900 border border-slate-800">Tổng P&L Forex/Vàng: <span id="sum-fx" class="font-mono font-bold text-emerald-400">$0.00</span></div>
+        <div class="px-3 py-1.5 rounded bg-slate-900 border border-slate-800">Tổng P&L Quốc Tế: <span id="sum-fx" class="font-mono font-bold text-emerald-400">$0.00</span></div>
         <button onclick="clearLogs()" class="px-3 py-1.5 rounded bg-rose-950 hover:bg-rose-900 text-rose-300 border border-rose-800">Xóa Sổ</button>
       </div>
     </div>
@@ -255,29 +256,33 @@ function recalc(){
   if(curPlan) showPlan(curPlan);
 }
 
-// Nhận diện loại tài sản: Forex, Vàng, Crypto hay Chứng khoán VN
+// Nhận diện thông minh cả tên ngân hàng VN, Bitcoin, USOIL, Vàng, Forex
 function detectMarket(raw){
   var s = raw.replace(/\s+/g, "").toUpperCase();
-  if(s.indexOf("XAU") !== -1 || s === "GOLD") return { type: "GOLD", display: "XAU/USD", yahoo: "GC=F", contract: 100, dec: 2 };
-  if(s.indexOf("XAG") !== -1 || s === "SILVER") return { type: "GOLD", display: "XAG/USD", yahoo: "SI=F", contract: 5000, dec: 3 };
-  if(s.indexOf("BTC") !== -1) return { type: "CRYPTO", display: "BTC/USD", yahoo: "BTC-USD", contract: 1, dec: 1 };
-  if(s.indexOf("ETH") !== -1) return { type: "CRYPTO", display: "ETH/USD", yahoo: "ETH-USD", contract: 1, dec: 2 };
+  if(s === "MB" || s === "MBBANK") s = "MBB";
+  if(s === "TECHCOMBANK" || s === "TCBANK") s = "TCB";
+  if(s === "VIETCOMBANK" || s === "VCBANK") s = "VCB";
+
+  if(s.indexOf("XAU") !== -1 || s === "GOLD" || s === "VANG") return { type: "GOLD", display: "XAU/USD", yahoo: "GC=F", contract: 100, dec: 2, unitName: "Lot" };
+  if(s.indexOf("XAG") !== -1 || s === "SILVER") return { type: "GOLD", display: "XAG/USD", yahoo: "SI=F", contract: 5000, dec: 3, unitName: "Lot" };
+  if(s === "USOIL" || s === "WTI" || s === "OIL" || s === "CL=F" || s === "DAU") return { type: "OIL", display: "USOIL (WTI)", yahoo: "CL=F", contract: 1000, dec: 2, unitName: "Lot" };
+  if(s === "UKOIL" || s === "BRENT") return { type: "OIL", display: "UKOIL (Brent)", yahoo: "BZ=F", contract: 1000, dec: 2, unitName: "Lot" };
+  if(s.indexOf("BTC") !== -1 || s === "BITCOIN") return { type: "CRYPTO", display: "BTC/USD", yahoo: "BTC-USD", contract: 1, dec: 1, unitName: "BTC" };
+  if(s.indexOf("ETH") !== -1 || s === "ETHEREUM") return { type: "CRYPTO", display: "ETH/USD", yahoo: "ETH-USD", contract: 1, dec: 2, unitName: "ETH" };
 
   var fxClean = s.replace("/", "");
   var fxPairs = ["EURUSD","GBPUSD","USDJPY","AUDUSD","USDCAD","USDCHF","NZDUSD","EURJPY","GBPJPY","EURGBP"];
   if(fxPairs.indexOf(fxClean) !== -1 || s.indexOf("/") !== -1){
     var disp = fxClean.length === 6 ? (fxClean.slice(0,3) + "/" + fxClean.slice(3)) : s;
     var isJpy = fxClean.indexOf("JPY") !== -1;
-    // Giá trị 1 Lot chuẩn: 100,000 đơn vị tiền tệ cơ sở
     var contractVal = isJpy ? 650 : 100000;
-    return { type: "FOREX", display: disp, yahoo: fxClean + "=X", contract: contractVal, dec: isJpy ? 3 : 5 };
+    return { type: "FOREX", display: disp, yahoo: fxClean + "=X", contract: contractVal, dec: isJpy ? 3 : 5, unitName: "Lot" };
   }
 
   var vnSym = s === "VN-INDEX" ? "VNINDEX" : s;
-  return { type: "VN", display: vnSym, vnSym: vnSym, contract: 1000, dec: 2 };
+  return { type: "VN", display: vnSym, vnSym: vnSym, contract: 1000, dec: 2, unitName: "CP" };
 }
 
-// Lấy dữ liệu nến cho Chứng khoán Việt Nam
 async function fetchVnCandles(sym, tf){
   var to = Math.floor(Date.now()/1000);
   var days = tf === "1" ? 5 : ((tf === "15" || tf === "30") ? 25 : (tf === "60" ? 60 : (tf === "W" ? 900 : 220)));
@@ -306,7 +311,6 @@ async function fetchVnCandles(sym, tf){
   return null;
 }
 
-// Lấy dữ liệu nến cho Forex, Vàng, Crypto qua cổng dữ liệu toàn cầu
 async function fetchGlobalCandles(yahooSym, tf){
   var intervalMap = { "1": "1m", "15": "15m", "30": "30m", "60": "60m", "D": "1d", "W": "1wk" };
   var rangeMap = { "1": "1d", "15": "5d", "30": "1mo", "60": "1mo", "D": "1y", "W": "5y" };
@@ -406,9 +410,9 @@ function calcPlan(mkt, curr, sHi, sLo, ma20, ma50, candles, isIntraday){
   var rec = sc >= 70 ? "MUA ĐẠT CHUẨN (BUY)" : (sc >= 50 ? "CHỜ MUA (BUY LIMIT)" : "ĐỨNG NGOÀI / PHÒNG THỦ");
   var cls = sc >= 70 ? "bg-emerald-950 text-emerald-400 border-emerald-600" : (sc >= 50 ? "bg-amber-950 text-amber-400 border-amber-600" : "bg-rose-950 text-rose-400 border-rose-600");
   var entry = sc >= 70 ? +((curr + ma20)/2).toFixed(dec) : +Math.min(curr, ma20).toFixed(dec);
-  var slBuf = isFx ? 0.996 : 0.975;
+  var slBuf = isFx ? 0.992 : 0.975;
   var sl = +(sLo * slBuf).toFixed(dec);
-  var minRisk = isFx ? entry * 0.0025 : entry * 0.015;
+  var minRisk = isFx ? entry * 0.003 : entry * 0.015;
   var rk = Math.max(Math.abs(entry - sl), minRisk);
   var tp1 = +(entry + rk * 2.0).toFixed(dec), tp2 = +(entry + rk * 3.2).toFixed(dec);
 
@@ -435,8 +439,10 @@ function showPlan(p){
   var qty = 0, volText = "", mult = 1;
   if(p.isFx){
     var riskUsd = fxCap * r;
-    qty = Math.max(0.01, +(riskUsd / (dist * p.mkt.contract)).toFixed(2));
-    volText = qty.toFixed(2) + " Lot";
+    var step = p.mkt.type === "CRYPTO" ? 0.001 : 0.01;
+    var decVol = p.mkt.type === "CRYPTO" ? 3 : 2;
+    qty = Math.max(step, +(riskUsd / (dist * p.mkt.contract)).toFixed(decVol));
+    volText = qty.toFixed(decVol) + " " + p.mkt.unitName;
     mult = qty * p.mkt.contract;
   } else if(p.sym === "VNINDEX"){
     qty = 1; volText = "Chỉ số"; mult = 1000;
