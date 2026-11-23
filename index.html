@@ -143,7 +143,7 @@
       <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
         <div>
           <h2 id="chart-title" class="text-base font-bold text-white">📈 Biểu Đồ Kỹ Thuật Trực Tiếp — HPG</h2>
-          <p class="text-xs text-slate-400">Tự động vẽ kèm đường Entry, Cắt lỗ (SL) và Chốt lời (TP) từ hệ thống phân tích</p>
+          <p class="text-xs text-slate-400">Biểu đồ nến thị trường thực tế + kẻ sẵn vùng Entry (Xanh dương), SL (Đỏ), TP (Xanh lá)</p>
         </div>
         <div class="flex flex-wrap gap-2">
           <button onclick="openSymbolChart('XAU/USD')" class="px-3 py-1.5 rounded bg-slate-800 hover:bg-blue-600 text-xs font-semibold">XAU/USD</button>
@@ -214,45 +214,71 @@
       return;
     }
 
-    container.innerHTML = `<div class="flex items-center justify-center h-full text-sm text-slate-400">Đang tải dữ liệu nến thị trường thực tế cho ${sym}...</div>`;
-    try {
-      const to = Math.floor(Date.now() / 1000);
-      const from = to - 180 * 86400;
-      const url = `https://dchart-api.vndirect.com.vn/dchart/history?resolution=D&symbol=${encodeURIComponent(sym)}&from=${from}&to=${to}`;
-      const res = await fetch(url);
-      const json = await res.json();
+    container.innerHTML = `<div class="flex items-center justify-center h-full text-sm text-sky-400">⏳ Đang tải biểu đồ nến thị trường thực tế cho ${sym}...</div>`;
 
-      container.innerHTML = "";
-      const chart = LightweightCharts.createChart(container, {
-        width: container.clientWidth,
-        height: 540,
-        layout: { background: { color: "#0b1120" }, textColor: "#cbd5e1" },
-        grid: { vertLines: { color: "#1e293b" }, horzLines: { color: "#1e293b" } },
-        timeScale: { borderColor: "#334155" }
-      });
+    const apiSym = sym === "VN-INDEX" ? "VNINDEX" : sym;
+    const to = Math.floor(Date.now() / 1000);
+    const from = to - 200 * 86400;
 
-      const candleSeries = chart.addCandlestickSeries({
-        upColor: "#10b981", downColor: "#ef4444", borderVisible: false,
-        wickUpColor: "#10b981", wickDownColor: "#ef4444"
-      });
+    // Danh sách 2 nguồn dữ liệu nến chứng khoán Việt Nam tốc độ cao (tự động chuyển dự phòng)
+    const urls = [
+      `https://dchart-api.vndirect.com.vn/dchart/history?resolution=D&symbol=${encodeURIComponent(apiSym)}&from=${from}&to=${to}`,
+      `https://services.entrade.com.vn/chart-api/v2/ohlcs/stock?from=${from}&to=${to}&symbol=${encodeURIComponent(apiSym)}&resolution=1D`
+    ];
 
-      const candles = [];
-      for (let i = 0; i < json.t.length; i++) {
-        const d = new Date(json.t[i] * 1000).toISOString().slice(0, 10);
-        candles.push({ time: d, open: json.o[i], high: json.h[i], low: json.l[i], close: json.c[i] });
-      }
-      candleSeries.setData(candles);
-
-      const sig = latestRows.find(x => x.symbol === sym);
-      if (sig) {
-        candleSeries.createPriceLine({ price: sig.entry_price, color: "#38bdf8", lineWidth: 2, lineStyle: 2, title: "ENTRY" });
-        candleSeries.createPriceLine({ price: sig.stop_loss, color: "#f43f5e", lineWidth: 2, lineStyle: 2, title: "SL" });
-        candleSeries.createPriceLine({ price: sig.take_profit, color: "#10b981", lineWidth: 2, lineStyle: 2, title: "TP" });
-      }
-      chart.timeScale().fitContent();
-    } catch (e) {
-      container.innerHTML = `<div class="flex items-center justify-center h-full text-sm text-amber-400">Không tải được dữ liệu nến cho ${sym}. Vui lòng thử lại sau ít phút.</div>`;
+    let json = null;
+    for (const u of urls) {
+      try {
+        const res = await fetch(u);
+        const data = await res.json();
+        if (data && data.t && data.t.length > 0) {
+          json = data;
+          break;
+        }
+      } catch (err) {}
     }
+
+    if (!json || !json.t || json.t.length === 0) {
+      container.innerHTML = `
+        <div class="flex flex-col items-center justify-center h-full gap-3 text-sm text-slate-300">
+          <p>Trình duyệt đang chặn kết nối trực tiếp tới sàn HOSE cho mã <b>${sym}</b>.</p>
+          <a href="https://www.tradingview.com/chart/?symbol=HOSE%3A${encodeURIComponent(apiSym)}" target="_blank"
+             class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold">
+            📈 Mở Biểu Đồ ${sym} Toàn Màn Hình Trên TradingView ↗
+          </a>
+        </div>`;
+      return;
+    }
+
+    container.innerHTML = "";
+    const chart = LightweightCharts.createChart(container, {
+      width: container.clientWidth,
+      height: 540,
+      layout: { background: { color: "#0b1120" }, textColor: "#cbd5e1" },
+      grid: { vertLines: { color: "#1e293b" }, horzLines: { color: "#1e293b" } },
+      timeScale: { borderColor: "#334155" }
+    });
+
+    const candleSeries = chart.addCandlestickSeries({
+      upColor: "#10b981", downColor: "#ef4444", borderVisible: false,
+      wickUpColor: "#10b981", wickDownColor: "#ef4444"
+    });
+
+    const candles = [];
+    for (let i = 0; i < json.t.length; i++) {
+      const d = new Date(json.t[i] * 1000).toISOString().slice(0, 10);
+      candles.push({ time: d, open: Number(json.o[i]), high: Number(json.h[i]), low: Number(json.l[i]), close: Number(json.c[i]) });
+    }
+    candleSeries.setData(candles);
+
+    const sig = latestRows.find(x => x.symbol === sym);
+    if (sig) {
+      const scale = (candles[candles.length - 1].close < 1000 && sig.entry_price > 1000) ? 0.001 : 1;
+      candleSeries.createPriceLine({ price: sig.entry_price * scale, color: "#38bdf8", lineWidth: 2, lineStyle: 2, title: "ENTRY" });
+      candleSeries.createPriceLine({ price: sig.stop_loss * scale, color: "#f43f5e", lineWidth: 2, lineStyle: 2, title: "SL" });
+      candleSeries.createPriceLine({ price: sig.take_profit * scale, color: "#10b981", lineWidth: 2, lineStyle: 2, title: "TP" });
+    }
+    chart.timeScale().fitContent();
   }
 
   async function loadData() {
@@ -280,117 +306,4 @@
       const dt = new Date(latestRows[0].created_at).toLocaleString("vi-VN");
       document.getElementById("last-updated").innerText = "Đã đồng bộ dữ liệu thật (" + dt + ")";
     } else {
-      document.getElementById("last-updated").innerText = "Đã kết nối Supabase (Chưa có bản ghi mới)";
-    }
-    renderTable();
-    renderHistory();
-  }
-
-  function renderTable() {
-    const capGold = parseFloat(document.getElementById("cap-gold").value) || 10000;
-    const capVn = parseFloat(document.getElementById("cap-vn").value) || 500000000;
-    const riskPct = (parseFloat(document.getElementById("risk-pct").value) || 1.5) / 100;
-
-    const riskGold = capGold * riskPct;
-    const riskVn = capVn * riskPct;
-    document.getElementById("stat-risk").innerText = `$${riskGold.toFixed(0)} / ${(riskVn / 1e6).toFixed(2)}Tr`;
-    document.getElementById("stat-risk-sub").innerText = `${(riskPct * 100).toFixed(1)}% tổng vốn`;
-
-    let buyCount = 0, waitCount = 0, sellCount = 0;
-    const tbody = document.getElementById("signal-tbody");
-    const cards = document.getElementById("detail-cards");
-    tbody.innerHTML = "";
-    cards.innerHTML = "";
-
-    latestRows.forEach(r => {
-      if (r.recommendation.includes("MUA")) buyCount++;
-      else if (r.recommendation.includes("BÁN")) sellCount++;
-      else waitCount++;
-
-      const isGold = r.symbol === "XAU/USD";
-      const slDist = Math.abs(r.entry_price - r.stop_loss) || 1;
-      const tpDist = Math.abs(r.take_profit - r.entry_price);
-      const rr = (tpDist / slDist).toFixed(2);
-
-      let volText = "";
-      if (isGold) {
-        const lots = Math.max(0.01, riskGold / (slDist * 100));
-        volText = `${lots.toFixed(2)} Lot`;
-      } else if (r.symbol === "VN-INDEX") {
-        volText = "Chỉ số";
-      } else {
-        const shares = Math.floor(riskVn / (slDist * 1000) / 100) * 100;
-        volText = `${shares.toLocaleString("vi-VN")} CP`;
-      }
-
-      const badgeClass = r.recommendation.includes("MUA")
-        ? "bg-emerald-950 text-emerald-400 border-emerald-700"
-        : r.recommendation.includes("BÁN")
-        ? "bg-rose-950 text-rose-400 border-rose-700"
-        : "bg-amber-950 text-amber-400 border-amber-700";
-
-      tbody.innerHTML += `
-        <tr class="hover:bg-slate-800/40">
-          <td class="py-3.5 px-2 font-bold text-white">${r.symbol}</td>
-          <td class="py-3.5 px-2 font-mono font-semibold text-white">${r.current_price}</td>
-          <td class="py-3.5 px-2 font-bold ${r.confluence_score >= 70 ? 'text-emerald-400' : 'text-amber-400'}">${r.confluence_score}/100</td>
-          <td class="py-3.5 px-2"><span class="px-2.5 py-1 rounded-md border text-xs font-semibold ${badgeClass}">${r.recommendation}</span></td>
-          <td class="py-3.5 px-2 font-mono text-sky-400">${r.entry_price}</td>
-          <td class="py-3.5 px-2 font-mono text-rose-400">${r.stop_loss}</td>
-          <td class="py-3.5 px-2 font-mono text-emerald-400">${r.take_profit}</td>
-          <td class="py-3.5 px-2 font-mono text-slate-300">1 : ${rr}</td>
-          <td class="py-3.5 px-2 font-bold text-amber-400">${volText}</td>
-          <td class="py-3.5 px-2"><button onclick="openSymbolChart('${r.symbol}')" class="px-2.5 py-1 rounded bg-blue-950 hover:bg-blue-800 text-blue-300 border border-blue-700 text-xs">Mở Biểu Đồ</button></td>
-        </tr>
-      `;
-
-      const fiboZone = r.fibo_level >= 0.5 && r.fibo_level <= 0.786
-        ? "Vùng Discount / OTE (Hỗ trợ mua tối ưu)"
-        : r.fibo_level < 0.236 ? "Vùng Premium (Gần đỉnh kháng cự)" : "Vùng Cân Bằng (Equilibrium)";
-
-      cards.innerHTML += `
-        <div class="card p-4">
-          <div class="flex justify-between items-center mb-2">
-            <span class="font-bold text-base text-white">${r.symbol}</span>
-            <span class="text-xs font-bold px-2 py-0.5 rounded border ${badgeClass}">${r.recommendation}</span>
-          </div>
-          <div class="text-xs text-slate-400 space-y-1.5 mt-3">
-            <div class="flex justify-between"><span>Đỉnh / Đáy 30 phiên:</span><span class="text-slate-200 font-mono">${r.swing_high} / ${r.swing_low}</span></div>
-            <div class="flex justify-between"><span>Vị thế Fibonacci SMC:</span><span class="text-sky-400 font-semibold">${r.fibo_level} (${fiboZone})</span></div>
-            <div class="flex justify-between"><span>Kịch bản Elliott / Wyckoff:</span><span class="text-emerald-400">${r.confluence_score >= 70 ? 'Sóng đẩy / Spring xác nhận' : 'Tích lũy biên độ / Chờ xác nhận'}</span></div>
-            <div class="flex justify-between"><span>Kế hoạch Entry / SL / TP:</span><span class="font-mono text-amber-300">${r.entry_price} | ${r.stop_loss} | ${r.take_profit}</span></div>
-          </div>
-        </div>
-      `;
-    });
-
-    document.getElementById("stat-total").innerHTML = `${latestRows.length} <span class="text-xs font-normal text-slate-400">mã</span>`;
-    document.getElementById("stat-buy").innerText = buyCount;
-    document.getElementById("stat-wait").innerText = waitCount;
-    document.getElementById("stat-sell").innerText = sellCount;
-  }
-
-  function renderHistory() {
-    const hbody = document.getElementById("history-tbody");
-    hbody.innerHTML = "";
-    allHistory.forEach(r => {
-      const dt = r.created_at ? new Date(r.created_at).toLocaleString("vi-VN") : "-";
-      hbody.innerHTML += `
-        <tr class="hover:bg-slate-800/40">
-          <td class="py-2.5 px-2 text-xs text-slate-400">${dt}</td>
-          <td class="py-2.5 px-2 font-bold text-white">${r.symbol}</td>
-          <td class="py-2.5 px-2 font-mono">${r.current_price}</td>
-          <td class="py-2.5 px-2 font-bold text-sky-400">${r.confluence_score}/100</td>
-          <td class="py-2.5 px-2 text-xs">${r.recommendation}</td>
-          <td class="py-2.5 px-2 font-mono text-sky-400">${r.entry_price}</td>
-          <td class="py-2.5 px-2 font-mono text-rose-400">${r.stop_loss}</td>
-          <td class="py-2.5 px-2 font-mono text-emerald-400">${r.take_profit}</td>
-        </tr>
-      `;
-    });
-  }
-
-  loadData();
-</script>
-</body>
-</html>
+      document
