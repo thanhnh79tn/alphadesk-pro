@@ -1,0 +1,32 @@
+name: AlphaDesk Auto Report
+
+on:
+  schedule:
+    # 01:00 UTC = 08:00 sáng giờ Việt Nam (GMT+7)
+    - cron: '0 1 * * *'
+    # 13:00 UTC = 20:00 tối giờ Việt Nam (GMT+7)
+    - cron: '0 13 * * *'
+  workflow_dispatch: # Cho phép bấm nút chạy thử ngay lập tức bất kỳ lúc nào
+
+jobs:
+  run-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Tải mã nguồn
+        uses: actions/checkout@v4
+
+      - name: Cài đặt Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cài đặt thư viện phân tích
+        run: pip install -r requirements.txt
+
+      - name: Chạy phân tích và gửi báo cáo Telegram
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python auto_report.py
