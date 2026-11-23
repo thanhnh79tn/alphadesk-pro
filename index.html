@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AlphaDeskPro V3.0 — Tư Vấn Vào Lệnh & Báo Cáo Lãi/Lỗ</title>
+  <title>AlphaDeskPro V3.1 — Đa Khung Thời Gian & Báo Cáo Lãi/Lỗ</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
@@ -11,14 +11,17 @@
     body { background: #0b1120; color: #e2e8f0; font-family: system-ui, sans-serif; }
     .card { background: #111827; border: 1px solid #1e293b; border-radius: 12px; }
     .inp { background: #090d16; border: 1px solid #334155; color: #fff; border-radius: 8px; padding: 9px 12px; width: 100%; }
+    .tf-btn { padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; }
+    .tf-active { background: #2563eb; color: #fff; }
+    .tf-idle { background: #1e293b; color: #94a3b8; }
   </style>
 </head>
 <body class="p-4 md:p-6 max-w-7xl mx-auto">
 
   <div class="flex flex-wrap justify-between items-center gap-4 mb-5">
     <div>
-      <h1 class="text-xl font-bold text-white">AlphaDesk<span class="text-sky-400">Pro</span> <span class="text-xs px-2 py-0.5 rounded bg-emerald-900 text-emerald-200">V3.0 P&L REPORT</span></h1>
-      <p class="text-xs text-slate-400">Tư Vấn Vào Lệnh Đa Tầng • Báo Cáo Dự Toán & Đối Soát Lãi/Lỗ Thực Tế</p>
+      <h1 class="text-xl font-bold text-white">AlphaDesk<span class="text-sky-400">Pro</span> <span class="text-xs px-2 py-0.5 rounded bg-emerald-900 text-emerald-200">V3.1 MULTI-TIMEFRAME</span></h1>
+      <p class="text-xs text-slate-400">Tư Vấn Vào Lệnh Đa Tầng • Đa Khung Thời Gian • Đối Soát Lãi/Lỗ Thực Tế</p>
     </div>
     <div class="text-xs text-slate-400">Giờ hệ thống: <span id="clock" class="px-2 py-1 rounded bg-slate-900 text-sky-400 font-mono font-bold">--:--:--</span></div>
   </div>
@@ -104,7 +107,7 @@
         </div>
       </div>
 
-      <!-- BÁO CÁO LÃI / LỖ KỊCH BẢN & THỰC TẾ -->
+      <!-- BÁO CÁO LÃI / LỖ -->
       <div class="bg-slate-950/90 border border-indigo-900/60 rounded-xl p-4">
         <div class="text-xs font-bold text-indigo-300 uppercase mb-3">💰 Báo Cáo Dự Toán & Đối Soát Lãi / Lỗ Nếu Vào Đúng Điểm Tư Vấn</div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
@@ -140,19 +143,29 @@
       <div class="card p-4"><div class="text-xs font-bold text-amber-400 mb-1">📐 MA & FIBONACCI</div><div id="t-fi" class="text-sm font-bold text-white mb-1">--</div><p id="d-fi" class="text-xs text-slate-400">--</p></div>
     </div>
 
-    <!-- Biểu đồ -->
+    <!-- Biểu đồ + Thanh chọn khung thời gian -->
     <div class="card p-4">
-      <div class="text-sm font-bold text-white mb-2">📈 Biểu Đồ Theo Dõi & Đường Kế Hoạch Lệnh (Xanh dương: Entry | Đỏ: SL | Xanh lá: TP)</div>
+      <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
+        <div class="text-sm font-bold text-white">📈 Biểu Đồ & Đường Kế Hoạch Lệnh <span class="text-xs font-normal text-slate-400">(Xanh dương: Entry | Đỏ: SL | Xanh lá: TP)</span></div>
+        <div id="tf-bar" class="flex items-center gap-1.5">
+          <span class="text-xs text-slate-400 mr-1">Khung thời gian:</span>
+          <button id="tf-15" onclick="setTF('15')" class="tf-btn tf-idle">15m</button>
+          <button id="tf-30" onclick="setTF('30')" class="tf-btn tf-idle">30m</button>
+          <button id="tf-60" onclick="setTF('60')" class="tf-btn tf-idle">1H</button>
+          <button id="tf-D" onclick="setTF('D')" class="tf-btn tf-active">1D</button>
+          <button id="tf-W" onclick="setTF('W')" class="tf-btn tf-idle">1W</button>
+        </div>
+      </div>
       <div id="chart-box" class="w-full h-[460px] rounded-lg overflow-hidden border border-slate-800 bg-[#0b1120]"></div>
     </div>
   </div>
 
-  <!-- BẢNG BÁO CÁO LÃI / LỖ CÁC KÈO ĐÃ TƯ VẤN (BACKTEST / FORWARD TEST) -->
+  <!-- SỔ ĐỐI SOÁT LÃI / LỖ -->
   <div class="card p-5 mt-6 overflow-x-auto">
     <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
       <div>
         <h2 class="text-base font-bold text-white">📑 Sổ Đối Soát Hiệu Quả Tư Vấn (Lãi / Lỗ Thực Tế Theo Điểm Entry)</h2>
-        <p class="text-xs text-slate-400">Tự động đối chiếu giá hiện tại với điểm vào tư vấn để tính lãi/lỗ thực tế từng lệnh</p>
+        <p class="text-xs text-slate-400">Đối chiếu giá hiện tại với điểm vào tư vấn để thống kê lãi/lỗ từng lệnh</p>
       </div>
       <div class="flex items-center gap-4 text-xs">
         <div class="px-3 py-1.5 rounded bg-slate-900 border border-slate-800">Tổng P&L CK VN: <span id="sum-vn" class="font-mono font-bold text-emerald-400">0 đ</span></div>
@@ -180,13 +193,22 @@
 
 <script>
 setInterval(function(){ document.getElementById("clock").innerText = new Date().toLocaleTimeString("vi-VN"); }, 1000);
-var curPlan = null;
+var curPlan = null, curTF = "D";
 var db = null;
 try {
   if(window.supabase) db = window.supabase.createClient("https://yljsxlclrnmmmrigzdbq.supabase.co", "sb_publishable_gHr54uypgztdftgZ8YeoiQ_i8cjujV3");
 } catch(e){}
 
 function pick(s){ document.getElementById("sym-inp").value = s; analyze(); }
+function setTF(tf){
+  curTF = tf;
+  ["15","30","60","D","W"].forEach(function(k){
+    var b = document.getElementById("tf-" + k);
+    if(b) b.className = "tf-btn " + (k === tf ? "tf-active" : "tf-idle");
+  });
+  analyze();
+}
+
 function recalc(){
   var g = +document.getElementById("cap-gold").value || 10000;
   var v = +document.getElementById("cap-vn").value || 500000000;
@@ -195,15 +217,35 @@ function recalc(){
   if(curPlan) showPlan(curPlan);
 }
 
+async function fetchVnCandles(sym, tf){
+  var to = Math.floor(Date.now()/1000);
+  var days = (tf === "15" || tf === "30") ? 25 : (tf === "60" ? 60 : (tf === "W" ? 900 : 220));
+  var from = to - days * 86400;
+  var entradeRes = tf === "D" ? "1D" : (tf === "W" ? "1W" : tf);
+  var urls = [
+    "https://dchart-api.vndirect.com.vn/dchart/history?resolution=" + tf + "&symbol=" + sym + "&from=" + from + "&to=" + to,
+    "https://services.entrade.com.vn/chart-api/v2/ohlcs/stock?from=" + from + "&to=" + to + "&symbol=" + sym + "&resolution=" + entradeRes
+  ];
+  for(var i=0; i<urls.length; i++){
+    try {
+      var res = await fetch(urls[i]);
+      var j = await res.json();
+      if(j && j.t && j.t.length >= 15) return j;
+    } catch(e){}
+  }
+  return null;
+}
+
 async function analyze(){
   var raw = document.getElementById("sym-inp").value.trim().toUpperCase();
   if(!raw) return;
   var st = document.getElementById("status-box"), rb = document.getElementById("res-box");
   st.classList.remove("hidden");
-  st.innerHTML = "⏳ Đang tải dữ liệu thực tế & tính toán lãi/lỗ cho mã <b>" + raw + "</b>...";
+  st.innerHTML = "⏳ Đang tải dữ liệu khung <b>" + curTF + "</b> & tính toán lãi/lỗ cho mã <b>" + raw + "</b>...";
 
   var isGold = raw.indexOf("XAU") !== -1 || raw === "GOLD";
   var sym = isGold ? "XAU/USD" : (raw === "VN-INDEX" ? "VNINDEX" : raw);
+  document.getElementById("tf-bar").style.display = isGold ? "none" : "flex";
 
   if(isGold){
     var gCurr = 3622.3, gHi = 3680, gLo = 3510, gMa20 = 3590, gMa50 = 3540;
@@ -217,48 +259,42 @@ async function analyze(){
       } catch(e){}
     }
     st.classList.add("hidden"); rb.classList.remove("hidden");
-    curPlan = calcPlan("XAU/USD", true, gCurr, gHi, gLo, gMa20, gMa50, []);
+    curPlan = calcPlan("XAU/USD", true, gCurr, gHi, gLo, gMa20, gMa50, [], false);
     showPlan(curPlan);
     document.getElementById("chart-box").innerHTML = '<iframe src="https://s.tradingview.com/widgetembed/?symbol=OANDA%3AXAUUSD&interval=D&theme=dark&style=1&timezone=Asia%2FHo_Chi_Minh" style="width:100%;height:100%;border:0;"></iframe>';
     return;
   }
 
-  var to = Math.floor(Date.now()/1000), from = to - 220*86400;
-  var urls = [
-    "https://dchart-api.vndirect.com.vn/dchart/history?resolution=D&symbol=" + sym + "&from=" + from + "&to=" + to,
-    "https://services.entrade.com.vn/chart-api/v2/ohlcs/stock?from=" + from + "&to=" + to + "&symbol=" + sym + "&resolution=1D"
-  ];
-  var data = null;
-  for(var i=0; i<urls.length; i++){
-    try {
-      var res = await fetch(urls[i]);
-      var j = await res.json();
-      if(j && j.t && j.t.length >= 20){ data = j; break; }
-    } catch(e){}
-  }
-
+  var data = await fetchVnCandles(sym, curTF);
   if(!data){
-    st.innerHTML = "⚠️ Không lấy được dữ liệu của <b>" + sym + "</b> (vui lòng nhập đúng mã sàn HOSE/HNX như <b>HPG, FPT, SSI, MWG, VCB</b>).";
+    st.innerHTML = "⚠️ Không lấy được dữ liệu khung <b>" + curTF + "</b> của mã <b>" + sym + "</b> (vui lòng thử khung <b>1D</b> hoặc kiểm tra lại mã).";
     return;
   }
 
+  var isIntraday = (curTF === "15" || curTF === "30" || curTF === "60");
   var candles = [];
+  var seen = {};
   for(var k=0; k<data.t.length; k++){
-    candles.push({ time: new Date(data.t[k]*1000).toISOString().slice(0,10), open: +data.o[k], high: +data.h[k], low: +data.l[k], close: +data.c[k] });
+    var ts = Number(data.t[k]);
+    var tVal = isIntraday ? ts : new Date(ts*1000).toISOString().slice(0,10);
+    if(!seen[tVal]){
+      seen[tVal] = true;
+      candles.push({ time: tVal, open: +data.o[k], high: +data.h[k], low: +data.l[k], close: +data.c[k] });
+    }
   }
   var cl = candles.map(function(x){return x.close;}), hi = candles.map(function(x){return x.high;}), lo = candles.map(function(x){return x.low;});
   var curr = cl[cl.length-1];
-  var ma20 = cl.slice(-20).reduce(function(a,b){return a+b;},0)/20;
+  var ma20 = cl.slice(-20).reduce(function(a,b){return a+b;},0)/Math.min(20, cl.length);
   var ma50 = cl.slice(-50).reduce(function(a,b){return a+b;},0)/Math.min(50, cl.length);
   var sHi = Math.max.apply(null, hi.slice(-35)), sLo = Math.min.apply(null, lo.slice(-35));
 
-  curPlan = calcPlan(sym, false, curr, sHi, sLo, ma20, ma50, candles);
+  curPlan = calcPlan(sym, false, curr, sHi, sLo, ma20, ma50, candles, isIntraday);
   st.classList.add("hidden"); rb.classList.remove("hidden");
   showPlan(curPlan);
   drawChart(curPlan);
 }
 
-function calcPlan(sym, isGold, curr, sHi, sLo, ma20, ma50, candles){
+function calcPlan(sym, isGold, curr, sHi, sLo, ma20, ma50, candles, isIntraday){
   var rng = (sHi - sLo) || 1, fibo = (sHi - curr)/rng, dec = isGold ? 2 : (curr < 100 ? 2 : 1);
   var sc = 50 + (curr > ma20 && ma20 > ma50 ? 18 : (curr < ma20 && ma20 < ma50 ? -18 : 0)) + (fibo >= 0.5 && fibo <= 0.786 ? 17 : (fibo < 0.236 ? -10 : 5)) + (curr > ma20 ? 10 : 0);
   sc = Math.max(15, Math.min(95, Math.round(sc)));
@@ -271,14 +307,14 @@ function calcPlan(sym, isGold, curr, sHi, sLo, ma20, ma50, candles){
   var tp1 = +(entry + rk * 2.0).toFixed(dec), tp2 = +(entry + rk * 3.2).toFixed(dec);
 
   return {
-    sym: sym, isGold: isGold, curr: +curr.toFixed(dec), sc: sc, rec: rec, cls: cls, entry: entry, sl: sl, tp1: tp1, tp2: tp2, candles: candles,
-    sum: "Đánh giá tổng hợp " + sc + "/100 điểm. Vùng vào tối ưu quanh " + entry + ", cắt lỗ dưới " + sl + ", chốt lời kỳ vọng " + tp1 + " - " + tp2 + ".",
+    sym: sym, isGold: isGold, isIntraday: isIntraday, curr: +curr.toFixed(dec), sc: sc, rec: rec, cls: cls, entry: entry, sl: sl, tp1: tp1, tp2: tp2, candles: candles,
+    sum: "Khung [" + curTF + "] • Tổng hợp " + sc + "/100 điểm. Vùng vào tối ưu " + entry + ", cắt lỗ dưới " + sl + ", chốt lời " + tp1 + " - " + tp2 + ".",
     tEl: curr > ma20 ? "Sóng Đẩy Tăng Trưởng (Sóng 3/5)" : "Sóng Điều Chỉnh A-B-C",
     dEl: curr > ma20 ? "Hoàn tất nhịp chỉnh và bật tăng theo cấu trúc đỉnh cao hơn." : "Đang hiệu chỉnh ngắn hạn, đợi tạo đáy cao hơn.",
     tSmc: fibo >= 0.5 ? "Vùng Discount / Bullish OB" : "Vùng Cân Bằng / Premium",
-    dSmc: "Biên độ 35 phiên: " + sLo.toFixed(dec) + " - " + sHi.toFixed(dec) + " (Fibo " + fibo.toFixed(2) + ").",
+    dSmc: "Biên độ 35 nến: " + sLo.toFixed(dec) + " - " + sHi.toFixed(dec) + " (Fibo " + fibo.toFixed(2) + ").",
     tWy: curr >= ma20 ? "Pha D: Đẩy Giá (Markup)" : "Pha B: Tích Lũy Kiểm Tra Cung",
-    dWy: curr >= ma20 ? "Lực cầu chủ động nâng đỡ giá trên MA20." : "Đi ngang hấp thụ cung, chờ phiên bùng nổ khối lượng.",
+    dWy: curr >= ma20 ? "Lực cầu chủ động nâng đỡ giá trên MA20." : "Đi ngang hấp thụ cung, chờ nến bùng nổ khối lượng.",
     tFi: (curr > ma20 ? "Trên MA20 (" : "Dưới MA20 (") + ma20.toFixed(dec) + ")",
     dFi: "MA50 hiện tại ở mức " + ma50.toFixed(dec) + "."
   };
@@ -293,16 +329,11 @@ function showPlan(p){
   var volText = p.isGold ? qty.toFixed(2) + " Lot" : (p.sym === "VNINDEX" ? "Chỉ số" : qty.toLocaleString("vi-VN") + " CP");
   p.qty = qty; p.volText = volText;
 
-  // Tính toán Lãi / Lỗ bằng tiền thật
   var mult = p.isGold ? (qty * 100) : (qty * unitVnd);
-  var lossAmt = -(dist * mult);
-  var profit1 = (p.tp1 - p.entry) * mult;
-  var profit2 = (p.tp2 - p.entry) * mult;
-  var nowPnl = (p.curr - p.entry) * mult;
+  var lossAmt = -(dist * mult), profit1 = (p.tp1 - p.entry) * mult, profit2 = (p.tp2 - p.entry) * mult, nowPnl = (p.curr - p.entry) * mult;
 
   function fmtMoney(val, isGold){
-    var sign = val >= 0 ? "+" : "-";
-    var abs = Math.abs(val);
+    var sign = val >= 0 ? "+" : "-", abs = Math.abs(val);
     return isGold ? (sign + "$" + abs.toFixed(2)) : (sign + Math.round(abs).toLocaleString("vi-VN") + " đ");
   }
 
@@ -321,7 +352,6 @@ function showPlan(p){
   document.getElementById("r-rr2").innerText = "R:R = 1 : " + (Math.abs(p.tp2-p.entry)/dist).toFixed(2);
   document.getElementById("r-vol").innerText = volText;
 
-  // Hiển thị 4 ô báo cáo Lãi / Lỗ
   var nowEl = document.getElementById("pnl-now");
   nowEl.innerText = fmtMoney(nowPnl, p.isGold);
   nowEl.className = "text-base font-mono font-bold mt-1 " + (nowPnl >= 0 ? "text-emerald-400" : "text-rose-400");
@@ -339,7 +369,12 @@ function showPlan(p){
 function drawChart(p){
   var box = document.getElementById("chart-box"); box.innerHTML = "";
   if(!p.candles.length || !window.LightweightCharts) return;
-  var chart = LightweightCharts.createChart(box, { width: box.clientWidth || 800, height: 460, layout: { background: { color: "#0b1120" }, textColor: "#cbd5e1" }, grid: { vertLines: { color: "#1e293b" }, horzLines: { color: "#1e293b" } } });
+  var chart = LightweightCharts.createChart(box, {
+    width: box.clientWidth || 800, height: 460,
+    layout: { background: { color: "#0b1120" }, textColor: "#cbd5e1" },
+    grid: { vertLines: { color: "#1e293b" }, horzLines: { color: "#1e293b" } },
+    timeScale: { timeVisible: p.isIntraday, secondsVisible: false }
+  });
   var s = chart.addCandlestickSeries({ upColor: "#10b981", downColor: "#ef4444", borderVisible: false, wickUpColor: "#10b981", wickDownColor: "#ef4444" });
   s.setData(p.candles);
   s.createPriceLine({ price: p.entry, color: "#38bdf8", lineWidth: 2, lineStyle: 2, title: "ENTRY" });
@@ -349,35 +384,24 @@ function drawChart(p){
   chart.timeScale().fitContent();
 }
 
-// Lưu kèo tư vấn vào sổ theo dõi Lãi/Lỗ
 function saveSignalToLog(){
   if(!curPlan) return;
   var logs = JSON.parse(localStorage.getItem("alphadesk_pnl_logs") || "[]");
   logs.unshift({
-    time: new Date().toLocaleString("vi-VN"),
-    sym: curPlan.sym,
-    isGold: curPlan.isGold,
-    qty: curPlan.qty,
-    volText: curPlan.volText,
-    entry: curPlan.entry,
-    sl: curPlan.sl,
-    tp1: curPlan.tp1,
-    curr: curPlan.curr
+    time: new Date().toLocaleString("vi-VN") + " [" + curTF + "]",
+    sym: curPlan.sym, isGold: curPlan.isGold, qty: curPlan.qty, volText: curPlan.volText,
+    entry: curPlan.entry, sl: curPlan.sl, tp1: curPlan.tp1, curr: curPlan.curr
   });
   localStorage.setItem("alphadesk_pnl_logs", JSON.stringify(logs));
   renderLogs();
-  alert("✅ Đã lưu lệnh " + curPlan.sym + " (Entry: " + curPlan.entry + ") vào Sổ Đối Soát Lãi/Lỗ bên dưới!");
+  alert("✅ Đã lưu lệnh " + curPlan.sym + " (Entry: " + curPlan.entry + ") vào Sổ Đối Soát Lãi/Lỗ!");
 }
 
-function clearLogs(){
-  localStorage.removeItem("alphadesk_pnl_logs");
-  renderLogs();
-}
+function clearLogs(){ localStorage.removeItem("alphadesk_pnl_logs"); renderLogs(); }
 
 function renderLogs(){
   var logs = JSON.parse(localStorage.getItem("alphadesk_pnl_logs") || "[]");
-  var tbody = document.getElementById("log-tbody");
-  tbody.innerHTML = "";
+  var tbody = document.getElementById("log-tbody"); tbody.innerHTML = "";
   var sumVn = 0, sumGold = 0;
 
   if(!logs.length){
