@@ -3,121 +3,250 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AlphaDeskPro — Trợ Lý Phân Tích & Tư Vấn Vào Lệnh Đa Tầng</title>
+  <title>AlphaDeskPro — Trợ Lý Tư Vấn Vào Lệnh</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
   <style>
-    body { background-color: #0b1120; color: #e2e8f0; font-family: 'Inter', system-ui, sans-serif; }
-    .card { background-color: #111827; border: 1px solid #1e293b; border-radius: 12px; }
-    .input-box { background-color: #090d16; border: 1px solid #334155; color: #f8fafc; border-radius: 8px; padding: 10px 14px; width: 100%; }
-    .tab-active { background-color: #2563eb; color: #ffffff; }
-    .tab-inactive { background-color: #1e293b; color: #94a3b8; }
+    body { background: #0b1120; color: #e2e8f0; font-family: system-ui, sans-serif; }
+    .card { background: #111827; border: 1px solid #1e293b; border-radius: 12px; }
+    .inp { background: #090d16; border: 1px solid #334155; color: #fff; border-radius: 8px; padding: 10px 12px; width: 100%; }
   </style>
 </head>
 <body class="p-4 md:p-6 max-w-7xl mx-auto">
 
-  <!-- Header -->
-  <div class="flex flex-wrap items-center justify-between gap-4 mb-5">
-    <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center font-bold text-white text-lg">A</div>
-      <div>
-        <div class="flex items-center gap-2">
-          <h1 class="text-xl font-bold text-white">AlphaDesk<span class="text-sky-400">Pro</span></h1>
-          <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-950 text-indigo-300 border border-indigo-700">AI TRADING ADVISOR</span>
+  <div class="flex flex-wrap justify-between items-center gap-4 mb-5">
+    <div>
+      <h1 class="text-xl font-bold text-white">AlphaDesk<span class="text-sky-400">Pro</span> <span class="text-xs px-2 py-0.5 rounded bg-emerald-900 text-emerald-200">V2.0 LIVE</span></h1>
+      <p class="text-xs text-slate-400">Tư Vấn Vào Lệnh Đa Tầng: Sóng Elliott • SMC • Wyckoff • MA/Fibonacci</p>
+    </div>
+    <div class="text-xs text-slate-400">Giờ hệ thống: <span id="clock" class="px-2 py-1 rounded bg-slate-900 text-sky-400 font-mono font-bold">--:--:--</span></div>
+  </div>
+
+  <!-- Quản trị vốn -->
+  <div class="card p-4 mb-5 grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
+    <div><label class="text-[11px] text-slate-400">Vốn Vàng ($)</label><input id="cap-gold" type="number" value="10000" onchange="recalc()" class="inp font-mono text-sm"></div>
+    <div><label class="text-[11px] text-slate-400">Vốn CK Việt Nam (đ)</label><input id="cap-vn" type="number" value="500000000" onchange="recalc()" class="inp font-mono text-sm"></div>
+    <div><label class="text-[11px] text-slate-400">Rủi ro / Lệnh (%)</label><input id="risk-pct" type="number" step="0.1" value="1.5" onchange="recalc()" class="inp font-mono text-sm text-amber-400"></div>
+    <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 flex justify-between text-xs">
+      <span class="text-slate-400">Rủi ro tối đa:</span><span id="risk-budget" class="font-bold font-mono text-emerald-400">$150 | 7.50Tr</span>
+    </div>
+  </div>
+
+  <!-- Ô nhập mã phân tích -->
+  <div class="card p-5 mb-5 border-blue-900/60">
+    <h2 class="text-base font-bold text-white mb-2">🎯 Nhập Mã Muốn Tham Gia Giao Dịch</h2>
+    <div class="flex flex-col sm:flex-row gap-3 mb-3">
+      <input id="sym-inp" type="text" value="HPG" onkeydown="if(event.key==='Enter') analyze()" class="inp font-mono text-base font-bold uppercase">
+      <button onclick="analyze()" class="px-6 py-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm whitespace-nowrap cursor-pointer">🚀 Phân Tích & Tư Vấn Ngay</button>
+    </div>
+    <div class="flex flex-wrap gap-2 text-xs">
+      <span class="text-slate-400 py-1">Chọn nhanh:</span>
+      <button onclick="pick('HPG')" class="px-3 py-1 rounded bg-slate-800 hover:bg-blue-600 text-sky-300 font-semibold">HPG</button>
+      <button onclick="pick('FPT')" class="px-3 py-1 rounded bg-slate-800 hover:bg-blue-600 text-sky-300 font-semibold">FPT</button>
+      <button onclick="pick('SSI')" class="px-3 py-1 rounded bg-slate-800 hover:bg-blue-600 text-sky-300 font-semibold">SSI</button>
+      <button onclick="pick('MWG')" class="px-3 py-1 rounded bg-slate-800 hover:bg-blue-600 text-sky-300 font-semibold">MWG</button>
+      <button onclick="pick('VCB')" class="px-3 py-1 rounded bg-slate-800 hover:bg-blue-600 text-sky-300 font-semibold">VCB</button>
+      <button onclick="pick('VNINDEX')" class="px-3 py-1 rounded bg-slate-800 hover:bg-blue-600 text-sky-300 font-semibold">VN-INDEX</button>
+      <button onclick="pick('XAU/USD')" class="px-3 py-1 rounded bg-amber-950 hover:bg-amber-800 text-amber-300 font-semibold">XAU/USD</button>
+    </div>
+  </div>
+
+  <div id="status-box" class="hidden mb-4 p-4 rounded-xl bg-slate-900 border border-slate-700 text-sm text-sky-400"></div>
+
+  <!-- Kết quả tư vấn -->
+  <div id="res-box" class="hidden space-y-5">
+    <div class="card p-5 border-sky-800/60">
+      <div class="flex flex-wrap justify-between items-center gap-3 pb-4 mb-4 border-b border-slate-800">
+        <div>
+          <div class="flex items-center gap-3">
+            <h3 id="r-sym" class="text-2xl font-extrabold text-white">--</h3>
+            <span id="r-price" class="text-xl font-mono font-bold text-sky-400">--</span>
+            <span id="r-rec" class="px-3 py-1 rounded text-xs font-bold border">--</span>
+          </div>
+          <p id="r-sum" class="text-xs text-slate-300 mt-1.5">--</p>
         </div>
-        <p class="text-xs text-slate-400">Hệ Thống Tư Vấn Vào Lệnh Đa Tầng: Sóng Elliott • SMC (OB/FVG) • Wyckoff • MA/Fibonacci</p>
-      </div>
-    </div>
-    <div class="text-xs text-slate-400">
-      Đồng hồ hệ thống: <span id="clock" class="px-2.5 py-1 rounded bg-slate-900 text-sky-400 font-mono font-bold">--:--:--</span>
-    </div>
-  </div>
-
-  <!-- Thanh điều hướng 3 tab -->
-  <div class="flex flex-wrap gap-2 mb-5">
-    <button id="btn-tab1" onclick="switchTab(1)" class="tab-active px-4 py-2.5 rounded-lg text-sm font-semibold">1. Tư Vấn & Phân Tích Mã Cụ Thể</button>
-    <button id="btn-tab2" onclick="switchTab(2)" class="tab-inactive px-4 py-2.5 rounded-lg text-sm font-semibold">2. Danh Mục Quét Tự Động (08:00 & 20:00)</button>
-    <button id="btn-tab3" onclick="switchTab(3)" class="tab-inactive px-4 py-2.5 rounded-lg text-sm font-semibold">3. Nhật Ký Lịch Sử Tín Hiệu</button>
-  </div>
-
-  <!-- Quản Trị Vốn -->
-  <div class="card p-4 mb-5">
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 items-end">
-      <div>
-        <label class="block text-[11px] text-slate-400 mb-1">Vốn Vàng / Crypto ($)</label>
-        <input id="cap-gold" type="number" value="10000" onchange="recalcCurrent()" class="input-box font-mono text-sm" />
-      </div>
-      <div>
-        <label class="block text-[11px] text-slate-400 mb-1">Vốn CK Việt Nam (VNĐ)</label>
-        <input id="cap-vn" type="number" value="500000000" onchange="recalcCurrent()" class="input-box font-mono text-sm" />
-      </div>
-      <div>
-        <label class="block text-[11px] text-slate-400 mb-1">Rủi ro tối đa / Lệnh (%)</label>
-        <input id="risk-pct" type="number" step="0.1" value="1.5" onchange="recalcCurrent()" class="input-box font-mono text-sm text-amber-400" />
-      </div>
-      <div class="bg-slate-900/80 border border-slate-800 rounded-lg p-2.5 flex justify-between items-center">
-        <span class="text-xs text-slate-400">Ngân sách rủi ro / Lệnh:</span>
-        <span id="risk-budget" class="text-xs font-bold font-mono text-emerald-400">$150 | 7.50Tr</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- TAB 1: CÔNG CỤ TƯ VẤN MÃ CỤ THỂ -->
-  <div id="tab-1">
-    <div class="card p-5 mb-5 border-indigo-900/70">
-      <h2 class="text-base font-bold text-white mb-1">🎯 Nhập Mã Tài Sản Bạn Muốn Tham Gia</h2>
-      <p class="text-xs text-slate-400 mb-4">Nhập mã cổ phiếu Việt Nam (HPG, FPT, SSI, MWG, TCB, VCB, VIC, VNINDEX...) hoặc Vàng (XAU/USD) để nhận tư vấn điểm vào, cắt lỗ, chốt lời</p>
-      
-      <div class="flex flex-col sm:flex-row gap-3 mb-3">
-        <input id="symbol-input" type="text" value="HPG" placeholder="Nhập mã (VD: HPG, SSI, MWG, FPT, XAU/USD)..."
-               onkeydown="if(event.key==='Enter') runAdvisor()"
-               class="input-box font-mono text-base font-bold uppercase tracking-wider border-indigo-600/60 focus:outline-none" />
-        <button id="btn-analyze" onclick="runAdvisor()" class="px-6 py-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm whitespace-nowrap shadow-lg shadow-blue-900/40 cursor-pointer">
-          🚀 Phân Tích & Tư Vấn Ngay
-        </button>
-      </div>
-
-      <div class="flex flex-wrap items-center gap-2 text-xs">
-        <span class="text-slate-400">Chọn nhanh:</span>
-        <button onclick="quickAnalyze('HPG')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-sky-300 font-semibold">HPG</button>
-        <button onclick="quickAnalyze('FPT')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-sky-300 font-semibold">FPT</button>
-        <button onclick="quickAnalyze('SSI')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-sky-300 font-semibold">SSI</button>
-        <button onclick="quickAnalyze('MWG')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-sky-300 font-semibold">MWG</button>
-        <button onclick="quickAnalyze('VCB')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-sky-300 font-semibold">VCB</button>
-        <button onclick="quickAnalyze('VNINDEX')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-sky-300 font-semibold">VN-INDEX</button>
-        <button onclick="quickAnalyze('XAU/USD')" class="px-2.5 py-1 rounded bg-amber-950 hover:bg-amber-900 text-amber-300 border border-amber-800 font-semibold">XAU/USD (Vàng)</button>
-      </div>
-    </div>
-
-    <div id="advisor-status" class="hidden mb-4 p-4 rounded-xl bg-slate-900 border border-slate-800 text-sm text-sky-400"></div>
-
-    <div id="advisor-result" class="hidden space-y-5">
-      <div class="card p-5 border-sky-900/60">
-        <div class="flex flex-wrap items-center justify-between gap-3 pb-4 mb-4 border-b border-slate-800">
-          <div>
-            <div class="flex items-center gap-3">
-              <h3 id="res-symbol" class="text-2xl font-extrabold text-white">HPG</h3>
-              <span id="res-price" class="text-xl font-mono font-bold text-sky-400">--</span>
-              <span id="res-badge" class="px-3 py-1 rounded-lg text-xs font-bold border">--</span>
-            </div>
-            <p id="res-summary" class="text-xs text-slate-300 mt-1.5">--</p>
-          </div>
-          <div class="text-right">
-            <div class="text-xs text-slate-400">Điểm Hợp Lưu Đa Tầng</div>
-            <div id="res-score" class="text-3xl font-extrabold text-emerald-400">--/100</div>
-          </div>
+        <div class="text-right">
+          <div class="text-xs text-slate-400">Điểm Hợp Lưu</div>
+          <div id="r-score" class="text-3xl font-extrabold text-emerald-400">--/100</div>
         </div>
+      </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-          <div class="bg-slate-950/90 p-3.5 rounded-xl border border-sky-900/60">
-            <div class="text-[11px] uppercase text-sky-400 font-semibold">1. Điểm Vào (Entry)</div>
-            <div id="res-entry" class="text-lg font-mono font-bold text-white mt-1">--</div>
-            <div class="text-[11px] text-slate-400 mt-0.5">Vùng giá tối ưu</div>
-          </div>
-          <div class="bg-slate-950/90 p-3.5 rounded-xl border border-rose-900/60">
-            <div class="text-[11px] uppercase text-rose-400 font-semibold">2. Cắt Lỗ (Stop Loss)</div>
-            <div id="res-sl" class="text-lg font-mono font-bold text-rose-400 mt-1">--</div>
-            <div id="res-sl-pct" class="text-[11px] text-slate-400 mt-0.5">--</div>
-          </div>
-          <div class="bg-slate-950/9
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+        <div class="bg-slate-950 p-3.5 rounded-xl border border-sky-900/60">
+          <div class="text-[11px] text-sky-400 font-bold">1. ĐIỂM VÀO (ENTRY)</div>
+          <div id="r-entry" class="text-lg font-mono font-bold text-white mt-1">--</div>
+        </div>
+        <div class="bg-slate-950 p-3.5 rounded-xl border border-rose-900/60">
+          <div class="text-[11px] text-rose-400 font-bold">2. CẮT LỖ (SL)</div>
+          <div id="r-sl" class="text-lg font-mono font-bold text-rose-400 mt-1">--</div>
+          <div id="r-slpct" class="text-[11px] text-slate-400">--</div>
+        </div>
+        <div class="bg-slate-950 p-3.5 rounded-xl border border-emerald-900/60">
+          <div class="text-[11px] text-emerald-400 font-bold">3. CHỐT LỜI 1 (TP1)</div>
+          <div id="r-tp1" class="text-lg font-mono font-bold text-emerald-400 mt-1">--</div>
+          <div id="r-rr1" class="text-[11px] text-slate-400">--</div>
+        </div>
+        <div class="bg-slate-950 p-3.5 rounded-xl border border-emerald-900/60">
+          <div class="text-[11px] text-emerald-300 font-bold">4. CHỐT LỜI 2 (TP2)</div>
+          <div id="r-tp2" class="text-lg font-mono font-bold text-emerald-300 mt-1">--</div>
+          <div id="r-rr2" class="text-[11px] text-slate-400">--</div>
+        </div>
+        <div class="bg-slate-950 p-3.5 rounded-xl border border-amber-900/60 col-span-2 md:col-span-1">
+          <div class="text-[11px] text-amber-400 font-bold">5. KHỐI LƯỢNG VÀO</div>
+          <div id="r-vol" class="text-lg font-mono font-bold text-amber-400 mt-1">--</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 Phương pháp -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="card p-4"><div class="text-xs font-bold text-indigo-400 mb-1">🌊 SÓNG ELLIOTT</div><div id="t-el" class="text-sm font-bold text-white mb-1">--</div><p id="d-el" class="text-xs text-slate-400">--</p></div>
+      <div class="card p-4"><div class="text-xs font-bold text-sky-400 mb-1">🏦 SMART MONEY (SMC)</div><div id="t-smc" class="text-sm font-bold text-white mb-1">--</div><p id="d-smc" class="text-xs text-slate-400">--</p></div>
+      <div class="card p-4"><div class="text-xs font-bold text-emerald-400 mb-1">📊 CHU KỲ WYCKOFF</div><div id="t-wy" class="text-sm font-bold text-white mb-1">--</div><p id="d-wy" class="text-xs text-slate-400">--</p></div>
+      <div class="card p-4"><div class="text-xs font-bold text-amber-400 mb-1">📐 MA & FIBONACCI</div><div id="t-fi" class="text-sm font-bold text-white mb-1">--</div><p id="d-fi" class="text-xs text-slate-400">--</p></div>
+    </div>
+
+    <!-- Biểu đồ -->
+    <div class="card p-4">
+      <div class="text-sm font-bold text-white mb-2">📈 Biểu Đồ Theo Dõi & Đường Kế Hoạch Lệnh (Xanh dương: Entry | Đỏ: SL | Xanh lá: TP)</div>
+      <div id="chart-box" class="w-full h-[480px] rounded-lg overflow-hidden border border-slate-800 bg-[#0b1120]"></div>
+    </div>
+  </div>
+
+<script>
+setInterval(function(){ document.getElementById("clock").innerText = new Date().toLocaleTimeString("vi-VN"); }, 1000);
+var curPlan = null;
+
+function pick(s){ document.getElementById("sym-inp").value = s; analyze(); }
+function recalc(){
+  var g = +document.getElementById("cap-gold").value || 10000;
+  var v = +document.getElementById("cap-vn").value || 500000000;
+  var r = (+document.getElementById("risk-pct").value || 1.5)/100;
+  document.getElementById("risk-budget").innerText = "$" + (g*r).toFixed(0) + " | " + (v*r/1e6).toFixed(2) + "Tr";
+  if(curPlan) showPlan(curPlan);
+}
+
+async function analyze(){
+  var raw = document.getElementById("sym-inp").value.trim().toUpperCase();
+  if(!raw) return;
+  var st = document.getElementById("status-box");
+  var rb = document.getElementById("res-box");
+  st.classList.remove("hidden");
+  st.innerHTML = "⏳ Đang tải dữ liệu thị trường thực tế cho mã <b>" + raw + "</b>...";
+
+  var isGold = raw.indexOf("XAU") !== -1 || raw === "GOLD";
+  var sym = isGold ? "XAU/USD" : (raw === "VN-INDEX" ? "VNINDEX" : raw);
+
+  if(isGold){
+    st.classList.add("hidden"); rb.classList.remove("hidden");
+    curPlan = calcPlan("XAU/USD", true, 2655, 2710, 2585, 2640, 2610, []);
+    showPlan(curPlan);
+    document.getElementById("chart-box").innerHTML = '<iframe src="https://s.tradingview.com/widgetembed/?symbol=OANDA%3AXAUUSD&interval=D&theme=dark&style=1&timezone=Asia%2FHo_Chi_Minh" style="width:100%;height:100%;border:0;"></iframe>';
+    return;
+  }
+
+  var to = Math.floor(Date.now()/1000), from = to - 220*86400;
+  var urls = [
+    "https://dchart-api.vndirect.com.vn/dchart/history?resolution=D&symbol=" + sym + "&from=" + from + "&to=" + to,
+    "https://services.entrade.com.vn/chart-api/v2/ohlcs/stock?from=" + from + "&to=" + to + "&symbol=" + sym + "&resolution=1D"
+  ];
+  var data = null;
+  for(var i=0; i<urls.length; i++){
+    try {
+      var res = await fetch(urls[i]);
+      var j = await res.json();
+      if(j && j.t && j.t.length >= 20){ data = j; break; }
+    } catch(e){}
+  }
+
+  if(!data){
+    st.innerHTML = "⚠️ Không lấy được dữ liệu của <b>" + sym + "</b> (vui lòng nhập đúng mã sàn HOSE/HNX như <b>HPG, FPT, SSI, MWG, VCB</b>).";
+    return;
+  }
+
+  var candles = [];
+  for(var k=0; k<data.t.length; k++){
+    candles.push({ time: new Date(data.t[k]*1000).toISOString().slice(0,10), open: +data.o[k], high: +data.h[k], low: +data.l[k], close: +data.c[k] });
+  }
+  var cl = candles.map(function(x){return x.close;}), hi = candles.map(function(x){return x.high;}), lo = candles.map(function(x){return x.low;});
+  var curr = cl[cl.length-1];
+  var ma20 = cl.slice(-20).reduce(function(a,b){return a+b;},0)/20;
+  var ma50 = cl.slice(-50).reduce(function(a,b){return a+b;},0)/Math.min(50, cl.length);
+  var sHi = Math.max.apply(null, hi.slice(-35)), sLo = Math.min.apply(null, lo.slice(-35));
+
+  curPlan = calcPlan(sym, false, curr, sHi, sLo, ma20, ma50, candles);
+  st.classList.add("hidden"); rb.classList.remove("hidden");
+  showPlan(curPlan);
+  drawChart(curPlan);
+}
+
+function calcPlan(sym, isGold, curr, sHi, sLo, ma20, ma50, candles){
+  var rng = (sHi - sLo) || 1, fibo = (sHi - curr)/rng, dec = isGold ? 2 : (curr < 100 ? 2 : 1);
+  var sc = 50 + (curr > ma20 && ma20 > ma50 ? 18 : (curr < ma20 && ma20 < ma50 ? -18 : 0)) + (fibo >= 0.5 && fibo <= 0.786 ? 17 : (fibo < 0.236 ? -10 : 5)) + (curr > ma20 ? 10 : 0);
+  sc = Math.max(15, Math.min(95, Math.round(sc)));
+
+  var rec = sc >= 70 ? "MUA ĐẠT CHUẨN (BUY)" : (sc >= 50 ? "CHỜ MUA (BUY LIMIT)" : "ĐỨNG NGOÀI / PHÒNG THỦ");
+  var cls = sc >= 70 ? "bg-emerald-950 text-emerald-400 border-emerald-600" : (sc >= 50 ? "bg-amber-950 text-amber-400 border-amber-600" : "bg-rose-950 text-rose-400 border-rose-600");
+  var entry = sc >= 70 ? +((curr + ma20)/2).toFixed(dec) : +Math.min(curr, ma20).toFixed(dec);
+  var sl = +(sLo * (isGold ? 0.994 : 0.975)).toFixed(dec);
+  var rk = Math.max(Math.abs(entry - sl), entry * 0.015);
+  var tp1 = +(entry + rk * 2.0).toFixed(dec), tp2 = +(entry + rk * 3.2).toFixed(dec);
+
+  return {
+    sym: sym, isGold: isGold, curr: +curr.toFixed(dec), sc: sc, rec: rec, cls: cls, entry: entry, sl: sl, tp1: tp1, tp2: tp2, candles: candles,
+    sum: "Đánh giá tổng hợp " + sc + "/100 điểm. Vùng vào tối ưu quanh " + entry + ", cắt lỗ dưới " + sl + ", chốt lời kỳ vọng " + tp1 + " - " + tp2 + ".",
+    tEl: curr > ma20 ? "Sóng Đẩy Tăng Trưởng (Sóng 3/5)" : "Sóng Điều Chỉnh A-B-C",
+    dEl: curr > ma20 ? "Hoàn tất nhịp chỉnh và bật tăng theo cấu trúc đỉnh cao hơn." : "Đang hiệu chỉnh ngắn hạn, đợi tạo đáy cao hơn.",
+    tSmc: fibo >= 0.5 ? "Vùng Discount / Bullish OB" : "Vùng Cân Bằng / Premium",
+    dSmc: "Biên độ 35 phiên: " + sLo.toFixed(dec) + " - " + sHi.toFixed(dec) + " (Fibo " + fibo.toFixed(2) + ").",
+    tWy: curr >= ma20 ? "Pha D: Đẩy Giá (Markup)" : "Pha B: Tích Lũy Kiểm Tra Cung",
+    dWy: curr >= ma20 ? "Lực cầu chủ động nâng đỡ giá trên MA20." : "Đi ngang hấp thụ cung, chờ phiên bùng nổ khối lượng.",
+    tFi: (curr > ma20 ? "Trên MA20 (" : "Dưới MA20 (") + ma20.toFixed(dec) + ")",
+    dFi: "MA50 hiện tại ở mức " + ma50.toFixed(dec) + "."
+  };
+}
+
+function showPlan(p){
+  var g = +document.getElementById("cap-gold").value || 10000, v = +document.getElementById("cap-vn").value || 500000000, r = (+document.getElementById("risk-pct").value || 1.5)/100;
+  var dist = Math.abs(p.entry - p.sl) || 0.1;
+  var vol = p.isGold ? Math.max(0.01, (g*r)/(dist*100)).toFixed(2) + " Lot" : (p.sym === "VNINDEX" ? "Chỉ số" : Math.max(100, Math.floor((v*r)/(dist*(p.entry<1000?1000:1))/100)*100).toLocaleString("vi-VN") + " CP");
+
+  document.getElementById("r-sym").innerText = p.sym;
+  document.getElementById("r-price").innerText = p.curr;
+  document.getElementById("r-rec").innerText = p.rec;
+  document.getElementById("r-rec").className = "px-3 py-1 rounded text-xs font-bold border " + p.cls;
+  document.getElementById("r-sum").innerText = p.sum;
+  document.getElementById("r-score").innerText = p.sc + "/100";
+  document.getElementById("r-entry").innerText = p.entry;
+  document.getElementById("r-sl").innerText = p.sl;
+  document.getElementById("r-slpct").innerText = "-" + ((dist/p.entry)*100).toFixed(1) + "%";
+  document.getElementById("r-tp1").innerText = p.tp1;
+  document.getElementById("r-rr1").innerText = "R:R = 1 : " + (Math.abs(p.tp1-p.entry)/dist).toFixed(2);
+  document.getElementById("r-tp2").innerText = p.tp2;
+  document.getElementById("r-rr2").innerText = "R:R = 1 : " + (Math.abs(p.tp2-p.entry)/dist).toFixed(2);
+  document.getElementById("r-vol").innerText = vol;
+
+  document.getElementById("t-el").innerText = p.tEl; document.getElementById("d-el").innerText = p.dEl;
+  document.getElementById("t-smc").innerText = p.tSmc; document.getElementById("d-smc").innerText = p.dSmc;
+  document.getElementById("t-wy").innerText = p.tWy; document.getElementById("d-wy").innerText = p.dWy;
+  document.getElementById("t-fi").innerText = p.tFi; document.getElementById("d-fi").innerText = p.dFi;
+}
+
+function drawChart(p){
+  var box = document.getElementById("chart-box"); box.innerHTML = "";
+  if(!p.candles.length || !window.LightweightCharts) return;
+  var chart = LightweightCharts.createChart(box, { width: box.clientWidth || 800, height: 480, layout: { background: { color: "#0b1120" }, textColor: "#cbd5e1" }, grid: { vertLines: { color: "#1e293b" }, horzLines: { color: "#1e293b" } } });
+  var s = chart.addCandlestickSeries({ upColor: "#10b981", downColor: "#ef4444", borderVisible: false, wickUpColor: "#10b981", wickDownColor: "#ef4444" });
+  s.setData(p.candles);
+  s.createPriceLine({ price: p.entry, color: "#38bdf8", lineWidth: 2, lineStyle: 2, title: "ENTRY" });
+  s.createPriceLine({ price: p.sl, color: "#f43f5e", lineWidth: 2, lineStyle: 2, title: "SL" });
+  s.createPriceLine({ price: p.tp1, color: "#10b981", lineWidth: 2, lineStyle: 2, title: "TP1" });
+  s.createPriceLine({ price: p.tp2, color: "#34d399", lineWidth: 1, lineStyle: 3, title: "TP2" });
+  chart.timeScale().fitContent();
+}
+
+recalc();
+analyze();
+</script>
+</body>
+</html>
