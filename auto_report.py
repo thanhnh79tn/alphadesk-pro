@@ -50,13 +50,13 @@ def analyze_asset(asset):
         score = 50
         reasons = []
 
-        # 1. Xu hướng MA
-        if curr_price > ma20 > ma50:
+        # 1. Xu hướng MA (Tránh dùng dấu < > để không lỗi HTML Telegram)
+        if curr_price > ma20 and ma20 > ma50:
             score += 20
-            reasons.append("MA20>MA50 (Uptrend)")
-        elif curr_price < ma20 < ma50:
+            reasons.append("MA20 trên MA50 (Uptrend)")
+        elif curr_price < ma20 and ma20 < ma50:
             score -= 20
-            reasons.append("MA20<MA50 (Downtrend)")
+            reasons.append("MA20 dưới MA50 (Downtrend)")
         else:
             reasons.append("MA Tích lũy")
 
@@ -68,7 +68,7 @@ def analyze_asset(asset):
             score -= 10
             reasons.append("Vùng Premium cao")
 
-        # 3. Wyckoff Spring / Upthrust kiểm tra đáy/đỉnh 10 phiên
+        # 3. Wyckoff Spring kiểm tra đáy 10 phiên
         recent_low = float(low.tail(10).min())
         if recent_low <= swing_low * 1.005 and curr_price > ma20:
             score += 15
@@ -121,7 +121,6 @@ def main():
         res = analyze_asset(asset)
         if res:
             results.append(res)
-            # Lưu vào bảng analysis_reports trên Supabase
             db_row = {
                 "symbol": res["symbol"],
                 "current_price": res["current_price"],
@@ -148,7 +147,7 @@ def main():
     df_out = pd.DataFrame(results)
     df_out.to_excel(excel_filename, index=False)
 
-    # Soạn tin nhắn báo cáo Telegram
+    # Soạn tin nhắn báo cáo Telegram chuẩn đẹp
     lines = [
         f"📊 <b>ALPHADESK PRO — BÁO CÁO {session_label}</b>",
         f"🕒 Thời gian: <code>{time_str} (GMT+7)</code>",
@@ -159,17 +158,18 @@ def main():
         lines.append(
             f"{icon} <b>{r['symbol']}</b> | Giá: <b>{r['current_price']}</b>\n"
             f"   • Điểm hợp lưu: <b>{r['confluence_score']}/100</b> ({r['notes']})\n"
-            f"   • Hành động: <b>{r['recommendation']}</b>\n"
-            f"   • Entry: <code>{r['entry_price']}</code> | SL: <code>{r['stop_loss']}</code> | TP: <code>{r['take_profit']}</code>"
+            f"   • Khuyến nghị: <b>{r['recommendation']}</b>\n"
+            f"   • Entry: <code>{r['entry_price']}</code> | SL: <code>{r['stop_loss']}</code> | TP: <code>{r['take_profit']}</code>\n"
         )
-    lines.append("━━━━━━━━━━━━━━━━━━━━\n📎 <i>Đính kèm chi tiết bảng tính Excel bên dưới.</i>")
+    lines.append("━━━━━━━━━━━━━━━━━━━━\n📎 <i>Chi tiết đầy đủ nằm trong tệp Excel đính kèm bên dưới.</i>")
     message_text = "\n".join(lines)
 
     # Gửi tin nhắn văn bản tới Telegram
-    requests.post(
+    resp = requests.post(
         f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage",
         data={"chat_id": TELEGRAM_CHAT_ID, "text": message_text, "parse_mode": "HTML"}
     )
+    print("Telegram sendMessage status:", resp.status_code, resp.text)
 
     # Gửi đính kèm file Excel tới Telegram
     with open(excel_filename, "rb") as f:
