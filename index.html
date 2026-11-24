@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AlphaDeskPro V5.0 SMC PRO — CHoCH • SCOB • FLIP • Cung Cầu</title>
+  <title>AlphaDeskPro V6.0 — Tự Động Chốt Điểm Vào & Cắt Lỗ</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
   <style>
@@ -23,15 +23,15 @@
     <div>
       <h1 class="text-xl font-bold text-white flex items-center gap-2">
         AlphaDesk<span class="text-sky-400">Pro</span>
-        <span class="text-xs px-2.5 py-0.5 rounded-full bg-indigo-950 text-indigo-300 border border-indigo-700 flex items-center gap-1.5">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 live-dot"></span> V5.0 SMC PRO (CHoCH • SCOB • FLIP)
+        <span class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-700 flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 live-dot"></span> V6.0 AUTO-DECISION ENGINE
         </span>
       </h1>
-      <p class="text-xs text-slate-400">Phân Tích Cấu Trúc Chuyên Sâu: CHoCH • SCOB • Vùng FLIP • Chuyển Đổi Cung Cầu • Vùng Mua/Bán • Báo Cáo P&L</p>
+      <p class="text-xs text-slate-400">Hệ Thống Tự Động Chốt Cứng Điểm Vào (Entry) & Điểm Cắt Lỗ (SL) Từ 10 Tầng Dữ Liệu SMC • Elliott • Wyckoff</p>
     </div>
     <div class="flex items-center gap-3 text-xs text-slate-400">
       <button id="btn-live-toggle" onclick="toggleRealtime()" class="px-3 py-1.5 rounded-lg bg-emerald-950 text-emerald-300 border border-emerald-700 font-bold cursor-pointer">
-        ⚡ Đang Bật Realtime (3s)
+        ⚡ Realtime (3s)
       </button>
       <div>Giờ hệ thống: <span id="clock" class="px-2 py-1 rounded bg-slate-900 text-sky-400 font-mono font-bold">--:--:--</span></div>
     </div>
@@ -41,18 +41,23 @@
   <div class="card p-4 mb-5 grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
     <div><label class="text-[11px] text-slate-400">Vốn Forex / Vàng / BTC ($)</label><input id="cap-fx" type="number" value="10000" onchange="recalc()" class="inp font-mono text-sm"></div>
     <div><label class="text-[11px] text-slate-400">Vốn CK Việt Nam (đ)</label><input id="cap-vn" type="number" value="500000000" onchange="recalc()" class="inp font-mono text-sm"></div>
-    <div><label class="text-[11px] text-slate-400">Rủi ro / Lệnh (%)</label><input id="risk-pct" type="number" step="0.1" value="1.5" onchange="recalc()" class="inp font-mono text-sm text-amber-400"></div>
+    <div><label class="text-[11px] text-slate-400">Rủi ro tối đa / Lệnh (%)</label><input id="risk-pct" type="number" step="0.1" value="1.5" onchange="recalc()" class="inp font-mono text-sm text-amber-400"></div>
     <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 flex justify-between text-xs">
-      <span class="text-slate-400">Rủi ro tối đa:</span><span id="risk-budget" class="font-bold font-mono text-emerald-400">$150 | 7.50Tr</span>
+      <span class="text-slate-400">Lỗ tối đa cho phép:</span><span id="risk-budget" class="font-bold font-mono text-emerald-400">$150 | 7.50Tr</span>
     </div>
   </div>
 
-  <!-- Ô nhập mã phân tích -->
+  <!-- Ô nhập mã + Quét toàn thị trường -->
   <div class="card p-5 mb-5 border-blue-900/60">
-    <h2 class="text-base font-bold text-white mb-2">🎯 Nhập Mã Tài Sản Muốn Phân Tích Cấu Trúc & Điểm Vào</h2>
+    <div class="flex flex-wrap justify-between items-center gap-2 mb-2">
+      <h2 class="text-base font-bold text-white">🎯 Chọn Mã Cần Hệ Thống Chốt Điểm Vào & Cắt Lỗ</h2>
+      <button onclick="scanAllMarkets()" class="px-3.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold cursor-pointer">
+        🔍 Tự Động Quét Tìm Kèo Đẹp Nhất Toàn Danh Mục
+      </button>
+    </div>
     <div class="flex flex-col sm:flex-row gap-3 mb-3">
-      <input id="sym-inp" type="text" value="HPG" placeholder="VD: BTC/USD, USOIL, XAU/USD, EUR/USD, MBB, TCB, VCB, HPG..." onkeydown="if(event.key==='Enter') analyze()" class="inp font-mono text-base font-bold uppercase">
-      <button onclick="analyze()" class="px-6 py-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm whitespace-nowrap cursor-pointer">🚀 Quét Cấu Trúc SMC & Tính Điểm Vào</button>
+      <input id="sym-inp" type="text" value="HPG" placeholder="Nhập mã: BTC/USD, USOIL, XAU/USD, EUR/USD, MBB, TCB, VCB, HPG..." onkeydown="if(event.key==='Enter') analyze()" class="inp font-mono text-base font-bold uppercase">
+      <button onclick="analyze()" class="px-6 py-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm whitespace-nowrap cursor-pointer">⚡ Chốt Lệnh Tự Động Ngay</button>
     </div>
     <div class="space-y-2 text-xs">
       <div class="flex flex-wrap items-center gap-1.5">
@@ -78,169 +83,141 @@
     </div>
   </div>
 
+  <!-- Bảng quét tự động toàn danh mục (ẩn cho đến khi bấm Quét) -->
+  <div id="scanner-box" class="hidden card p-5 mb-5 border-indigo-700/70 overflow-x-auto">
+    <div class="flex justify-between items-center mb-3">
+      <h3 class="text-sm font-bold text-indigo-300 uppercase">🏆 Bảng Xếp Hạng Kèo Tự Động Toàn Danh Mục (Sắp Xếp Theo Độ Tin Cậy Cao Nhất)</h3>
+      <button onclick="document.getElementById('scanner-box').classList.add('hidden')" class="text-xs text-slate-400 hover:text-white">✕ Đóng</button>
+    </div>
+    <table class="w-full text-left border-collapse text-xs">
+      <thead>
+        <tr class="border-b border-slate-800 uppercase text-slate-400">
+          <th class="py-2.5 px-2">Mã</th>
+          <th class="py-2.5 px-2">Giá Live</th>
+          <th class="py-2.5 px-2">Quyết Định Tự Động</th>
+          <th class="py-2.5 px-2">Điểm Vào Chốt</th>
+          <th class="py-2.5 px-2">Cắt Lỗ Chốt</th>
+          <th class="py-2.5 px-2">Chốt Lời TP1</th>
+          <th class="py-2.5 px-2">Độ Tin Cậy</th>
+          <th class="py-2.5 px-2">Mở Lệnh</th>
+        </tr>
+      </thead>
+      <tbody id="scanner-tbody" class="divide-y divide-slate-800/70"></tbody>
+    </table>
+  </div>
+
   <div id="status-box" class="hidden mb-4 p-4 rounded-xl bg-slate-900 border border-slate-700 text-sm text-sky-400"></div>
 
-  <!-- Kết quả tư vấn -->
+  <!-- KẾT QUẢ CHỐT LỆNH TỰ ĐỘNG -->
   <div id="res-box" class="hidden space-y-5">
-    <div class="card p-5 border-sky-800/60">
-      <div class="flex flex-wrap justify-between items-center gap-3 pb-4 mb-4 border-b border-slate-800">
+
+    <!-- KHỐI CHỐT LỆNH TUYỆT ĐỐI (KHÔNG CẦN TỰ PHÂN TÍCH) -->
+    <div id="verdict-card" class="card p-6 border-2 border-emerald-600/80 shadow-xl">
+      <div class="flex flex-wrap justify-between items-start gap-4 pb-5 mb-5 border-b border-slate-800">
         <div>
+          <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">🤖 Quyết Định Cuối Cùng Của Hệ Thống</div>
           <div class="flex flex-wrap items-center gap-3">
-            <h3 id="r-sym" class="text-2xl font-extrabold text-white">--</h3>
-            <span id="r-price" class="text-2xl font-mono font-extrabold text-sky-400 px-2.5 py-0.5 rounded bg-slate-950 border border-slate-800">--</span>
-            <span id="r-rec" class="px-3 py-1 rounded text-xs font-bold border">--</span>
+            <h2 id="r-sym" class="text-3xl font-black text-white">--</h2>
+            <span id="r-price" class="text-2xl font-mono font-extrabold text-sky-400 px-3 py-0.5 rounded-lg bg-slate-950 border border-slate-800">--</span>
+            <span id="r-action" class="px-4 py-1.5 rounded-lg text-sm font-black border uppercase tracking-wide">--</span>
             <span id="live-tick-info" class="text-[11px] text-emerald-400 font-mono"></span>
           </div>
-          <p id="r-sum" class="text-xs text-slate-300 mt-1.5">--</p>
+          <p id="r-reason" class="text-xs text-slate-200 mt-2 font-medium">--</p>
         </div>
-        <div class="flex items-center gap-4">
-          <div class="text-right">
-            <div class="text-xs text-slate-400">Điểm Hợp Lưu SMC</div>
-            <div id="r-score" class="text-3xl font-extrabold text-emerald-400">--/100</div>
+        <div class="flex items-center gap-3">
+          <div class="bg-slate-950 px-4 py-2 rounded-xl border border-slate-800 text-right">
+            <div class="text-[11px] text-slate-400">Độ Tin Cậy Hợp Lưu</div>
+            <div id="r-score" class="text-2xl font-black text-emerald-400">--%</div>
           </div>
-          <button onclick="saveSignalToLog()" class="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold cursor-pointer">
-            💾 Lưu Vào Sổ Theo Dõi Lãi/Lỗ
+          <button onclick="saveSignalToLog()" class="px-4 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold cursor-pointer shadow-lg">
+            💾 Khớp & Theo Dõi Lãi/Lỗ
           </button>
         </div>
       </div>
 
-      <!-- 5 Thông số lệnh -->
-      <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
-        <div class="bg-slate-950 p-3.5 rounded-xl border border-sky-900/60">
-          <div class="text-[11px] text-sky-400 font-bold">1. ĐIỂM VÀO (ENTRY)</div>
-          <div id="r-entry" class="text-lg font-mono font-bold text-white mt-1">--</div>
-          <div id="r-entry-basis" class="text-[10px] text-sky-300 mt-0.5">--</div>
+      <!-- 2 Ô CHỐT CỨNG LỚN NHẤT: ĐIỂM VÀO & ĐIỂM CẮT LỖ -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div class="bg-sky-950/40 p-5 rounded-2xl border-2 border-sky-500/80 flex flex-col justify-between">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-black uppercase tracking-wider text-sky-300">✅ CHỐT ĐIỂM VÀO LỆNH (ENTRY)</span>
+            <span id="r-order-type" class="text-[11px] px-2.5 py-0.5 rounded bg-sky-900 text-sky-200 font-bold">--</span>
+          </div>
+          <div id="r-entry" class="text-4xl font-mono font-black text-white my-2">--</div>
+          <div id="r-entry-why" class="text-xs text-sky-200/90">--</div>
         </div>
-        <div class="bg-slate-950 p-3.5 rounded-xl border border-rose-900/60">
-          <div class="text-[11px] text-rose-400 font-bold">2. CẮT LỖ (SL)</div>
-          <div id="r-sl" class="text-lg font-mono font-bold text-rose-400 mt-1">--</div>
-          <div id="r-slpct" class="text-[10px] text-rose-300 mt-0.5">--</div>
-        </div>
-        <div class="bg-slate-950 p-3.5 rounded-xl border border-emerald-900/60">
-          <div class="text-[11px] text-emerald-400 font-bold">3. CHỐT LỜI 1 (TP1)</div>
-          <div id="r-tp1" class="text-lg font-mono font-bold text-emerald-400 mt-1">--</div>
-          <div id="r-rr1" class="text-[10px] text-slate-400 mt-0.5">--</div>
-        </div>
-        <div class="bg-slate-950 p-3.5 rounded-xl border border-emerald-900/60">
-          <div class="text-[11px] text-emerald-300 font-bold">4. CHỐT LỜI 2 (TP2)</div>
-          <div id="r-tp2" class="text-lg font-mono font-bold text-emerald-300 mt-1">--</div>
-          <div id="r-rr2" class="text-[10px] text-slate-400 mt-0.5">--</div>
-        </div>
-        <div class="bg-slate-950 p-3.5 rounded-xl border border-amber-900/60 col-span-2 md:col-span-1">
-          <div class="text-[11px] text-amber-400 font-bold">5. KHỐI LƯỢNG VÀO</div>
-          <div id="r-vol" class="text-lg font-mono font-bold text-amber-400 mt-1">--</div>
-          <div class="text-[10px] text-slate-400 mt-0.5">Chuẩn quản trị rủi ro</div>
+
+        <div class="bg-rose-950/40 p-5 rounded-2xl border-2 border-rose-500/80 flex flex-col justify-between">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-black uppercase tracking-wider text-rose-300">🛑 CHỐT ĐIỂM CẮT LỖ (STOP LOSS)</span>
+            <span id="r-slpct" class="text-[11px] px-2.5 py-0.5 rounded bg-rose-900 text-rose-200 font-bold">--</span>
+          </div>
+          <div id="r-sl" class="text-4xl font-mono font-black text-rose-400 my-2">--</div>
+          <div id="r-sl-why" class="text-xs text-rose-200/90">--</div>
         </div>
       </div>
 
-      <!-- BÁO CÁO LÃI / LỖ -->
+      <!-- 3 Ô MỤC TIÊU CHỐT LỜI & KHỐI LƯỢNG -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+        <div class="bg-slate-950 p-3.5 rounded-xl border border-emerald-900/60 flex justify-between items-center">
+          <div>
+            <div class="text-[11px] text-emerald-400 font-bold">CHỐT LỜI 1 (TP1 - AN TOÀN)</div>
+            <div id="r-tp1" class="text-xl font-mono font-bold text-emerald-400 mt-0.5">--</div>
+          </div>
+          <div id="r-rr1" class="text-xs font-mono text-emerald-300 bg-emerald-950/60 px-2.5 py-1 rounded">--</div>
+        </div>
+        <div class="bg-slate-950 p-3.5 rounded-xl border border-emerald-900/60 flex justify-between items-center">
+          <div>
+            <div class="text-[11px] text-emerald-300 font-bold">CHỐT LỜI 2 (TP2 - MỞ RỘNG)</div>
+            <div id="r-tp2" class="text-xl font-mono font-bold text-emerald-300 mt-0.5">--</div>
+          </div>
+          <div id="r-rr2" class="text-xs font-mono text-emerald-200 bg-emerald-950/60 px-2.5 py-1 rounded">--</div>
+        </div>
+        <div class="bg-slate-950 p-3.5 rounded-xl border border-amber-900/60 flex justify-between items-center">
+          <div>
+            <div class="text-[11px] text-amber-400 font-bold">KHỐI LƯỢNG VÀO CHUẨN</div>
+            <div id="r-vol" class="text-xl font-mono font-bold text-amber-400 mt-0.5">--</div>
+          </div>
+          <div class="text-[11px] text-slate-400 text-right">Tự động chia<br>theo % rủi ro</div>
+        </div>
+      </div>
+
+      <!-- BÁO CÁO LÃI / LỖ TIỀN THẬT -->
       <div class="bg-slate-950/90 border border-indigo-900/60 rounded-xl p-4">
-        <div class="text-xs font-bold text-indigo-300 uppercase mb-3">💰 Báo Cáo Dự Toán & Đối Soát Lãi / Lỗ Theo Giá Realtime</div>
+        <div class="text-xs font-bold text-indigo-300 uppercase mb-2.5">💰 Dự Toán & Đối Soát Lãi / Lỗ Nếu Khớp Đúng Điểm Chốt</div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
           <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
-            <div class="text-slate-400">Lãi/Lỗ hiện tại (nếu vào tại Entry):</div>
+            <div class="text-slate-400">Lãi/Lỗ hiện tại (theo giá Live):</div>
             <div id="pnl-now" class="text-base font-mono font-bold mt-1">--</div>
             <div id="pnl-now-note" class="text-[11px] text-slate-400 mt-0.5">--</div>
           </div>
           <div class="p-3 rounded-lg bg-rose-950/30 border border-rose-900/50">
-            <div class="text-rose-300">Kịch bản chạm Cắt Lỗ (SL):</div>
+            <div class="text-rose-300">Nếu chạm Cắt Lỗ (SL):</div>
             <div id="pnl-sl" class="text-base font-mono font-bold text-rose-400 mt-1">--</div>
-            <div class="text-[11px] text-slate-400 mt-0.5">Mức lỗ tối đa được kiểm soát</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">Giới hạn lỗ tối đa</div>
           </div>
           <div class="p-3 rounded-lg bg-emerald-950/30 border border-emerald-900/50">
-            <div class="text-emerald-300">Kịch bản đạt Chốt Lời 1 (TP1):</div>
+            <div class="text-emerald-300">Nếu đạt Chốt Lời 1 (TP1):</div>
             <div id="pnl-tp1" class="text-base font-mono font-bold text-emerald-400 mt-1">--</div>
             <div class="text-[11px] text-slate-400 mt-0.5">Lợi nhuận mục tiêu 1</div>
           </div>
           <div class="p-3 rounded-lg bg-emerald-950/40 border border-emerald-800/60">
-            <div class="text-emerald-200">Kịch bản đạt Chốt Lời 2 (TP2):</div>
+            <div class="text-emerald-200">Nếu đạt Chốt Lời 2 (TP2):</div>
             <div id="pnl-tp2" class="text-base font-mono font-bold text-emerald-300 mt-1">--</div>
-            <div class="text-[11px] text-slate-400 mt-0.5">Lợi nhuận mở rộng tối đa</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">Lợi nhuận kỳ vọng tối đa</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 6 YẾU TỐ CẤU TRÚC CHUYÊN SÂU (CHoCH • SCOB • FLIP • CUNG CẦU • CẤU TRÚC • VÙNG MUA/BÁN) -->
-    <div>
-      <h3 class="text-sm font-bold text-white mb-2.5 flex items-center gap-2">
-        <span>🧠 Bóc Tách 6 Tầng Cấu Trúc SMC & Price Action (Căn Cứ Vào Lệnh & Đặt SL)</span>
-      </h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div class="card p-4 border-sky-900/50">
-          <div class="flex justify-between items-center mb-1">
-            <span class="text-xs font-bold text-sky-400 uppercase">1. Tín Hiệu CHoCH (Đảo Chiều)</span>
-            <span id="b-choch" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 font-bold">--</span>
-          </div>
-          <div id="t-choch" class="text-sm font-bold text-white mb-1">--</div>
-          <p id="d-choch" class="text-xs text-slate-400 leading-relaxed">--</p>
-        </div>
-
-        <div class="card p-4 border-indigo-900/50">
-          <div class="flex justify-between items-center mb-1">
-            <span class="text-xs font-bold text-indigo-400 uppercase">2. Khối Lệnh Đơn Nến (SCOB)</span>
-            <span id="b-scob" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 font-bold">--</span>
-          </div>
-          <div id="t-scob" class="text-sm font-bold text-white mb-1">--</div>
-          <p id="d-scob" class="text-xs text-slate-400 leading-relaxed">--</p>
-        </div>
-
-        <div class="card p-4 border-purple-900/50">
-          <div class="flex justify-between items-center mb-1">
-            <span class="text-xs font-bold text-purple-400 uppercase">3. Vùng FLIP (Chuyển Hóa S/R)</span>
-            <span id="b-flip" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 font-bold">--</span>
-          </div>
-          <div id="t-flip" class="text-sm font-bold text-white mb-1">--</div>
-          <p id="d-flip" class="text-xs text-slate-400 leading-relaxed">--</p>
-        </div>
-
-        <div class="card p-4 border-amber-900/50">
-          <div class="flex justify-between items-center mb-1">
-            <span class="text-xs font-bold text-amber-400 uppercase">4. Vùng Chuyển Đổi Cung – Cầu</span>
-            <span id="b-sd" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 font-bold">--</span>
-          </div>
-          <div id="t-sd" class="text-sm font-bold text-white mb-1">--</div>
-          <p id="d-sd" class="text-xs text-slate-400 leading-relaxed">--</p>
-        </div>
-
-        <div class="card p-4 border-rose-900/50">
-          <div class="flex justify-between items-center mb-1">
-            <span class="text-xs font-bold text-rose-400 uppercase">5. Vùng Theo Cấu Trúc (Protected)</span>
-            <span id="b-struct" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 font-bold">--</span>
-          </div>
-          <div id="t-struct" class="text-sm font-bold text-white mb-1">--</div>
-          <p id="d-struct" class="text-xs text-slate-400 leading-relaxed">--</p>
-        </div>
-
-        <div class="card p-4 border-emerald-900/50">
-          <div class="flex justify-between items-center mb-1">
-            <span class="text-xs font-bold text-emerald-400 uppercase">6. Vùng Mua (Demand) & Vùng Bán (Supply)</span>
-            <span id="b-zone" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 font-bold">--</span>
-          </div>
-          <div id="t-zone" class="text-sm font-bold text-white mb-1">--</div>
-          <p id="d-zone" class="text-xs text-slate-400 leading-relaxed">--</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- 4 Phương pháp kinh điển bổ trợ -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-      <div class="card p-4"><div class="text-xs font-bold text-indigo-400 mb-1">🌊 SÓNG ELLIOTT</div><div id="t-el" class="text-sm font-bold text-white mb-1">--</div><p id="d-el" class="text-xs text-slate-400">--</p></div>
-      <div class="card p-4"><div class="text-xs font-bold text-sky-400 mb-1">🏦 THANH KHOẢN & FVG</div><div id="t-smc" class="text-sm font-bold text-white mb-1">--</div><p id="d-smc" class="text-xs text-slate-400">--</p></div>
-      <div class="card p-4"><div class="text-xs font-bold text-emerald-400 mb-1">📊 CHU KỲ WYCKOFF</div><div id="t-wy" class="text-sm font-bold text-white mb-1">--</div><p id="d-wy" class="text-xs text-slate-400">--</p></div>
-      <div class="card p-4"><div class="text-xs font-bold text-amber-400 mb-1">📐 MA & FIBONACCI OTE</div><div id="t-fi" class="text-sm font-bold text-white mb-1">--</div><p id="d-fi" class="text-xs text-slate-400">--</p></div>
-    </div>
-
-    <!-- Biểu đồ + Thanh chọn khung thời gian -->
+    <!-- BIỂU ĐỒ KẺ SẴN ĐIỂM VÀO & ĐIỂM CẮT LỖ -->
     <div class="card p-4">
       <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
         <div class="text-sm font-bold text-white flex flex-wrap items-center gap-2">
-          <span>📈 Biểu Đồ Cấu Trúc Thời Gian Thực</span>
+          <span>📈 Biểu Đồ Kẻ Sẵn Điểm Vào & Điểm Cắt Lỗ</span>
           <span class="text-[11px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">● LIVE</span>
-          <span class="text-[11px] text-slate-400">(Xanh dương: Entry/SCOB | Đỏ: SL Cấu Trúc | Tím: FLIP/CHoCH | Vàng: Vùng Bán/Supply)</span>
         </div>
         <div class="flex items-center gap-1.5">
-          <span class="text-xs text-slate-400 mr-1">Khung thời gian:</span>
+          <span class="text-xs text-slate-400 mr-1">Khung:</span>
           <button id="tf-1" onclick="setTF('1')" class="tf-btn tf-idle">1m</button>
           <button id="tf-15" onclick="setTF('15')" class="tf-btn tf-idle">15m</button>
           <button id="tf-30" onclick="setTF('30')" class="tf-btn tf-idle">30m</button>
@@ -249,16 +226,31 @@
           <button id="tf-W" onclick="setTF('W')" class="tf-btn tf-idle">1W</button>
         </div>
       </div>
-      <div id="chart-box" class="w-full h-[490px] rounded-lg overflow-hidden border border-slate-800 bg-[#0b1120]"></div>
+      <div id="chart-box" class="w-full h-[460px] rounded-lg overflow-hidden border border-slate-800 bg-[#0b1120]"></div>
     </div>
+
+    <!-- CHI TIẾT BẰNG CHỨNG KỸ THUẬT (TÓM TẮT GỌN ĐỂ ĐỐI CHIẾU KHI CẦN) -->
+    <details class="card p-4" open>
+      <summary class="text-xs font-bold text-slate-300 uppercase cursor-pointer select-none">
+        📋 Xem Bằng Chứng Kỹ Thuật Đã Hợp Lưu (CHoCH • SCOB • FLIP • Cung Cầu • Cấu Trúc • Elliott • Wyckoff)
+      </summary>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4 text-xs">
+        <div class="p-3 rounded-lg bg-slate-950 border border-slate-800"><span class="text-sky-400 font-bold">1. CHoCH:</span> <span id="ev-choch" class="text-slate-300">--</span></div>
+        <div class="p-3 rounded-lg bg-slate-950 border border-slate-800"><span class="text-indigo-400 font-bold">2. SCOB:</span> <span id="ev-scob" class="text-slate-300">--</span></div>
+        <div class="p-3 rounded-lg bg-slate-950 border border-slate-800"><span class="text-purple-400 font-bold">3. Vùng FLIP:</span> <span id="ev-flip" class="text-slate-300">--</span></div>
+        <div class="p-3 rounded-lg bg-slate-950 border border-slate-800"><span class="text-amber-400 font-bold">4. Chuyển Đổi Cung Cầu:</span> <span id="ev-sd" class="text-slate-300">--</span></div>
+        <div class="p-3 rounded-lg bg-slate-950 border border-slate-800"><span class="text-rose-400 font-bold">5. Cấu Trúc Protected:</span> <span id="ev-struct" class="text-slate-300">--</span></div>
+        <div class="p-3 rounded-lg bg-slate-950 border border-slate-800"><span class="text-emerald-400 font-bold">6. Elliott / Wyckoff / MA:</span> <span id="ev-macro" class="text-slate-300">--</span></div>
+      </div>
+    </details>
   </div>
 
   <!-- SỔ ĐỐI SOÁT LÃI / LỖ -->
   <div class="card p-5 mt-6 overflow-x-auto">
     <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
       <div>
-        <h2 class="text-base font-bold text-white">📑 Sổ Đối Soát Hiệu Quả Tư Vấn (Cập Nhật Lãi/Lỗ Tự Động)</h2>
-        <p class="text-xs text-slate-400">Đối chiếu giá realtime với điểm vào SCOB / FLIP / CHoCH đã lưu</p>
+        <h2 class="text-base font-bold text-white">📑 Sổ Theo Dõi Lãi / Lỗ Các Lệnh Đã Chốt</h2>
+        <p class="text-xs text-slate-400">Tự động cập nhật lãi/lỗ theo biến động giá thị trường</p>
       </div>
       <div class="flex items-center gap-4 text-xs">
         <div class="px-3 py-1.5 rounded bg-slate-900 border border-slate-800">Tổng P&L CK VN: <span id="sum-vn" class="font-mono font-bold text-emerald-400">0 đ</span></div>
@@ -272,12 +264,12 @@
           <th class="py-3 px-2">Thời Gian</th>
           <th class="py-3 px-2">Mã</th>
           <th class="py-3 px-2">Khối Lượng</th>
-          <th class="py-3 px-2">Điểm Vào (Entry)</th>
-          <th class="py-3 px-2">Cắt Lỗ (SL)</th>
-          <th class="py-3 px-2">Chốt Lời (TP1)</th>
+          <th class="py-3 px-2">Điểm Vào Chốt</th>
+          <th class="py-3 px-2">Cắt Lỗ Chốt</th>
+          <th class="py-3 px-2">Chốt Lời TP1</th>
           <th class="py-3 px-2">Giá Hiện Tại</th>
           <th class="py-3 px-2">Trạng Thái</th>
-          <th class="py-3 px-2">Lãi / Lỗ Tạm Tính</th>
+          <th class="py-3 px-2">Lãi / Lỗ</th>
         </tr>
       </thead>
       <tbody id="log-tbody" class="divide-y divide-slate-800/70"></tbody>
@@ -292,7 +284,7 @@ var activeChart = null, activeSeries = null;
 function toggleRealtime(){
   liveEnabled = !liveEnabled;
   var btn = document.getElementById("btn-live-toggle");
-  btn.innerText = liveEnabled ? "⚡ Đang Bật Realtime (3s)" : "⏸ Đã Tạm Dừng Realtime";
+  btn.innerText = liveEnabled ? "⚡ Realtime (3s)" : "⏸ Tạm Dừng";
   btn.className = liveEnabled
     ? "px-3 py-1.5 rounded-lg bg-emerald-950 text-emerald-300 border border-emerald-700 font-bold cursor-pointer"
     : "px-3 py-1.5 rounded-lg bg-slate-800 text-slate-400 border border-slate-700 font-bold cursor-pointer";
@@ -329,7 +321,6 @@ function detectMarket(raw){
   if(s.indexOf("XAU") !== -1 || s === "GOLD" || s === "VANG") return { type: "GOLD", display: "XAU/USD", yahoo: "GC=F", contract: 100, dec: 2, unitName: "Lot" };
   if(s.indexOf("XAG") !== -1 || s === "SILVER") return { type: "GOLD", display: "XAG/USD", yahoo: "SI=F", contract: 5000, dec: 3, unitName: "Lot" };
   if(s === "USOIL" || s === "WTI" || s === "OIL" || s === "CL=F" || s === "DAU") return { type: "OIL", display: "USOIL (WTI)", yahoo: "CL=F", contract: 1000, dec: 2, unitName: "Lot" };
-  if(s === "UKOIL" || s === "BRENT") return { type: "OIL", display: "UKOIL (Brent)", yahoo: "BZ=F", contract: 1000, dec: 2, unitName: "Lot" };
   if(s.indexOf("BTC") !== -1 || s === "BITCOIN") return { type: "CRYPTO", display: "BTC/USD", yahoo: "BTC-USD", contract: 1, dec: 1, unitName: "BTC" };
   if(s.indexOf("ETH") !== -1 || s === "ETHEREUM") return { type: "CRYPTO", display: "ETH/USD", yahoo: "ETH-USD", contract: 1, dec: 2, unitName: "ETH" };
 
@@ -406,26 +397,129 @@ async function fetchGlobalCandles(yahooSym, tf){
   return null;
 }
 
-async function tickRealtimeUpdate(){
-  if(!curPlan || !activeSeries) return;
-  var candles = curPlan.mkt.type === "VN"
-    ? await fetchVnCandles(curPlan.mkt.vnSym, curTF)
-    : await fetchGlobalCandles(curPlan.mkt.yahoo, curTF);
+// ĐỘNG CƠ RA QUYẾT ĐỊNH TỰ ĐỘNG (AUTO-DECISION ENGINE)
+function computeAutoDecision(mkt, candles, isIntraday){
+  var isFx = mkt.type !== "VN";
+  var cl = candles.map(function(x){return x.close;}), hi = candles.map(function(x){return x.high;}), lo = candles.map(function(x){return x.low;});
+  var curr = cl[cl.length - 1];
+  var dec = mkt.type === "VN" ? (curr < 100 ? 2 : 1) : mkt.dec;
 
-  if(!candles || !candles.length) return;
-  var lastBar = candles[candles.length - 1];
-  try { activeSeries.update(lastBar); } catch(e){}
+  var ma20 = cl.slice(-20).reduce(function(a,b){return a+b;},0) / Math.min(20, cl.length);
+  var ma50 = cl.slice(-50).reduce(function(a,b){return a+b;},0) / Math.min(50, cl.length);
 
-  var prev = curPlan.curr;
-  curPlan.curr = +lastBar.close.toFixed(curPlan.mkt.dec);
-  var priceEl = document.getElementById("r-price");
-  priceEl.innerText = curPlan.curr;
-  if(curPlan.curr > prev) priceEl.className = "text-2xl font-mono font-extrabold text-emerald-400 px-2.5 py-0.5 rounded bg-emerald-950/50 border border-emerald-700";
-  else if(curPlan.curr < prev) priceEl.className = "text-2xl font-mono font-extrabold text-rose-400 px-2.5 py-0.5 rounded bg-rose-950/50 border border-rose-700";
+  var structHigh = Math.max.apply(null, hi.slice(-40));
+  var structLow = Math.min.apply(null, lo.slice(-40));
+  var prevStructHigh = Math.max.apply(null, hi.slice(-35, -8));
+  var prevStructLow = Math.min.apply(null, lo.slice(-35, -8));
+  var range = (structHigh - structLow) || 0.0001;
+  var fibo = (structHigh - curr) / range;
 
-  document.getElementById("live-tick-info").innerText = "● Cập nhật lúc " + new Date().toLocaleTimeString("vi-VN");
-  showPlan(curPlan);
-  updateLogsWithLivePrice(curPlan.sym, curPlan.curr);
+  // 1. CHoCH
+  var recentHigh = Math.max.apply(null, hi.slice(-8));
+  var recentLow = Math.min.apply(null, lo.slice(-8));
+  var bullChoch = (curr > prevStructHigh || recentHigh > prevStructHigh);
+  var bearChoch = (curr < prevStructLow || recentLow < prevStructLow);
+
+  // 2. SCOB (Single Candle Order Block)
+  var scobHigh = null, scobLow = null, scobFound = false;
+  for(var i = candles.length - 2; i >= Math.max(5, candles.length - 25); i--){
+    var c = candles[i], prevC = candles[i - 1], nextC = candles[i + 1];
+    var lowerWick = Math.min(c.open, c.close) - c.low;
+    var totalLen = (c.high - c.low) || 0.0001;
+    if(c.low < prevC.low && (lowerWick / totalLen) >= 0.35 && nextC.close > c.high){
+      scobHigh = +c.high.toFixed(dec);
+      scobLow = +c.low.toFixed(dec);
+      scobFound = true;
+      break;
+    }
+  }
+  if(!scobFound){
+    var minIdx = candles.length - 2;
+    for(var j = candles.length - 2; j >= Math.max(2, candles.length - 20); j--){
+      if(candles[j].low < candles[minIdx].low) minIdx = j;
+    }
+    scobHigh = +candles[minIdx].high.toFixed(dec);
+    scobLow = +candles[minIdx].low.toFixed(dec);
+  }
+
+  // 3. Vùng FLIP & Chuyển đổi Cung Cầu
+  var flipMid = +((structHigh + structLow) / 2).toFixed(dec);
+  var sdHigh = +(structLow + range * 0.35).toFixed(dec);
+  var buyZoneHigh = +(structLow + range * 0.48).toFixed(dec);
+  var sellZoneLow = +(structLow + range * 0.78).toFixed(dec);
+
+  // Chấm điểm xác suất tự động
+  var prob = 50;
+  if(bullChoch) prob += 16;
+  if(bearChoch) prob -= 22;
+  if(scobFound) prob += 12;
+  if(curr >= flipMid) prob += 8;
+  if(curr <= buyZoneHigh) prob += 10;
+  if(curr >= sellZoneLow) prob -= 12;
+  if(curr > ma20 && ma20 > ma50) prob += 8;
+  prob = Math.max(18, Math.min(94, Math.round(prob)));
+
+  // CHỐT CỨNG 1 ĐIỂM VÀO (ENTRY) & 1 ĐIỂM CẮT LỖ (SL) DUY NHẤT
+  var rawEntry = scobFound ? scobHigh : Math.max(scobHigh, sdHigh);
+  if(rawEntry > curr) rawEntry = Math.min(curr, (curr + flipMid) / 2);
+  if(rawEntry < structLow) rawEntry = +(structLow + range * 0.15).toFixed(dec);
+
+  var entry = +rawEntry.toFixed(dec);
+  // Cắt lỗ khóa chặt dưới đáy thấp nhất giữa SCOB và Đáy bảo vệ cấu trúc (Protected Low)
+  var slAnchor = Math.min(scobLow, structLow);
+  var slBuf = isFx ? 0.9965 : 0.982;
+  var sl = +(slAnchor * slBuf).toFixed(dec);
+
+  var minRisk = isFx ? entry * 0.0025 : entry * 0.015;
+  var rk = Math.max(Math.abs(entry - sl), minRisk);
+  var tp1 = +(Math.max(entry + rk * 2.0, sellZoneLow)).toFixed(dec);
+  var tp2 = +(Math.max(entry + rk * 3.2, structHigh)).toFixed(dec);
+
+  // Chốt hành động cuối cùng
+  var distToEntryPct = Math.abs(curr - entry) / curr * 100;
+  var action = "", orderType = "", cardBorder = "", actionBadge = "", reason = "";
+
+  if(prob >= 66 && !bearChoch){
+    if(distToEntryPct <= (isFx ? 0.35 : 1.5)){
+      action = "VÀO LỆNH MUA NGAY";
+      orderType = "LỆNH THỊ TRƯỜNG (MARKET BUY)";
+      cardBorder = "card p-6 border-2 border-emerald-500 shadow-xl";
+      actionBadge = "bg-emerald-600 text-white border-emerald-400";
+      reason = "Giá hiện tại (" + curr.toFixed(dec) + ") đã nằm ngay sát điểm chốt Entry (" + entry + ") với hợp lưu " + prob + "%. Vào lệnh ngay và đặt SL cứng tại " + sl + ".";
+    } else {
+      action = "ĐẶT LỆNH CHỜ MUA (BUY LIMIT)";
+      orderType = "LỆNH CHỜ BUY LIMIT TẠI " + entry;
+      cardBorder = "card p-6 border-2 border-sky-500 shadow-xl";
+      actionBadge = "bg-sky-600 text-white border-sky-400";
+      reason = "Xu hướng tăng xác nhận (" + prob + "%), không mua đuổi giá hiện tại (" + curr.toFixed(dec) + "). Kê sẵn lệnh Buy Limit tại đúng " + entry + " và SL tại " + sl + ".";
+    }
+  } else if(prob >= 48 && !bearChoch){
+    action = "KÊ LỆNH CHỜ MUA THĂM DÒ";
+    orderType = "BUY LIMIT BẮT NHỊP HỒI TẠI " + entry;
+    cardBorder = "card p-6 border-2 border-amber-500 shadow-xl";
+    actionBadge = "bg-amber-600 text-white border-amber-400";
+    reason = "Thị trường đang tích lũy (" + prob + "%). Chỉ khớp lệnh nếu giá điều chỉnh đúng về vùng SCOB/Cầu tại " + entry + ", cắt lỗ bắt buộc dưới " + sl + ".";
+  } else {
+    action = "CẤM VÀO LỆNH (ĐỨNG NGOÀI)";
+    orderType = "KHÔNG MỞ VỊ THẾ MUA";
+    cardBorder = "card p-6 border-2 border-rose-600 shadow-xl";
+    actionBadge = "bg-rose-600 text-white border-rose-400";
+    reason = "Cấu trúc đang suy yếu / Bearish CHoCH (độ tin cậy chỉ " + prob + "%). Đứng ngoài bảo toàn vốn cho đến khi giá tạo đáy mới vượt trên " + flipMid + ".";
+  }
+
+  return {
+    sym: mkt.display, mkt: mkt, isFx: isFx, isIntraday: isIntraday, curr: +curr.toFixed(dec),
+    prob: prob, action: action, orderType: orderType, cardBorder: cardBorder, actionBadge: actionBadge, reason: reason,
+    entry: entry, sl: sl, tp1: tp1, tp2: tp2, candles: candles,
+    entryWhy: (scobFound ? "Khóa cứng tại mép trên nến quét thanh khoản SCOB (" + scobLow + "–" + scobHigh + ") hợp lưu vùng Cầu." : "Khóa cứng tại giao điểm vùng Chuyển đổi Cung Cầu & Hỗ trợ cấu trúc."),
+    slWhy: "Khóa an toàn dưới đáy bảo vệ cấu trúc (" + structLow.toFixed(dec) + ") & râu quét thanh khoản (" + scobLow + "). Thủng mốc này cấu trúc tăng vô hiệu.",
+    evChoch: bullChoch ? ("Đã phá đỉnh cấu trúc " + prevStructHigh.toFixed(dec) + " (Bullish CHoCH)") : (bearChoch ? ("Thủng đáy " + prevStructLow.toFixed(dec) + " (Bearish CHoCH)") : ("Chưa phá vỡ biên " + prevStructLow.toFixed(dec) + "–" + prevStructHigh.toFixed(dec))),
+    evScob: scobFound ? ("Phát hiện nến SCOB chuẩn tại " + scobLow + "–" + scobHigh) : ("Vùng OB đáy tại " + scobLow + "–" + scobHigh),
+    evFlip: (curr >= flipMid ? "Giá nằm trên vùng FLIP hỗ trợ " : "Bị chặn dưới vùng FLIP kháng cự ") + flipMid,
+    evSd: "Vùng chuyển đổi Cung → Cầu tại " + (structLow + range * 0.15).toFixed(dec) + "–" + sdHigh,
+    evStruct: "Protected Low: " + structLow.toFixed(dec) + " | Protected High: " + structHigh.toFixed(dec),
+    evMacro: (curr > ma20 ? "Trên MA20 (" : "Dưới MA20 (") + ma20.toFixed(dec) + ") • Fibo hồi quy: " + fibo.toFixed(2)
+  };
 }
 
 async function analyze(){
@@ -436,191 +530,61 @@ async function analyze(){
   var mkt = detectMarket(raw);
   var st = document.getElementById("status-box"), rb = document.getElementById("res-box");
   st.classList.remove("hidden");
-  st.innerHTML = "⏳ Đang quét cấu trúc CHoCH • SCOB • FLIP • Cung Cầu khung <b>" + curTF + "</b> cho <b>" + mkt.display + "</b>...";
+  st.innerHTML = "⏳ Hệ thống đang tự động hợp lưu 10 yếu tố và chốt điểm vào / cắt lỗ cho <b>" + mkt.display + "</b>...";
 
   var candles = mkt.type === "VN"
     ? await fetchVnCandles(mkt.vnSym, curTF)
     : await fetchGlobalCandles(mkt.yahoo, curTF);
 
   if(!candles || candles.length < 20){
-    st.innerHTML = "⚠️ Không lấy được đủ dữ liệu khung <b>" + curTF + "</b> của <b>" + mkt.display + "</b> (vui lòng thử khung <b>1D</b> hoặc kiểm tra lại mã).";
+    st.innerHTML = "⚠️ Không lấy được dữ liệu khung <b>" + curTF + "</b> của <b>" + mkt.display + "</b> (vui lòng thử khung <b>1D</b> hoặc kiểm tra lại mã).";
     return;
   }
 
   var isIntraday = (curTF === "1" || curTF === "15" || curTF === "30" || curTF === "60");
-  curPlan = buildSmcStructurePlan(mkt, candles, isIntraday);
+  curPlan = computeAutoDecision(mkt, candles, isIntraday);
 
   st.classList.add("hidden"); rb.classList.remove("hidden");
-  document.getElementById("live-tick-info").innerText = "● Đồng bộ lúc " + new Date().toLocaleTimeString("vi-VN");
+  document.getElementById("live-tick-info").innerText = "● Chốt lúc " + new Date().toLocaleTimeString("vi-VN");
   showPlan(curPlan);
   drawChart(curPlan);
   startLiveStream();
 }
 
-// BỘ NÃO QUÉT CẤU TRÚC SMC: CHoCH • SCOB • FLIP • CUNG CẦU • PROTECTED STRUCTURE • BUY/SELL ZONES
-function buildSmcStructurePlan(mkt, candles, isIntraday){
-  var isFx = mkt.type !== "VN";
-  var cl = candles.map(function(x){return x.close;}), hi = candles.map(function(x){return x.high;}), lo = candles.map(function(x){return x.low;});
-  var curr = cl[cl.length - 1];
-  var dec = mkt.type === "VN" ? (curr < 100 ? 2 : 1) : mkt.dec;
+// Quét tự động toàn danh mục để tìm kèo có xác suất cao nhất
+async function scanAllMarkets(){
+  var scanBox = document.getElementById("scanner-box");
+  var tbody = document.getElementById("scanner-tbody");
+  scanBox.classList.remove("hidden");
+  tbody.innerHTML = '<tr><td colspan="8" class="py-5 text-center text-sky-400">⏳ Đang tự động quét 10 mã chủ lực (BTC, USOIL, XAU/USD, EUR/USD, MBB, TCB, VCB, HPG, FPT, SSI)...</td></tr>';
 
-  var ma20 = cl.slice(-20).reduce(function(a,b){return a+b;},0) / Math.min(20, cl.length);
-  var ma50 = cl.slice(-50).reduce(function(a,b){return a+b;},0) / Math.min(50, cl.length);
+  var watchlist = ["BTC/USD", "USOIL", "XAU/USD", "EUR/USD", "MBB", "TCB", "VCB", "HPG", "FPT", "SSI"];
+  var results = [];
 
-  // 1. Vùng theo cấu trúc (Protected Low / Protected High trong 40 nến)
-  var structHigh = Math.max.apply(null, hi.slice(-40));
-  var structLow = Math.min.apply(null, lo.slice(-40));
-  var prevStructHigh = Math.max.apply(null, hi.slice(-35, -8));
-  var prevStructLow = Math.min.apply(null, lo.slice(-35, -8));
-  var range = (structHigh - structLow) || 0.0001;
-  var fibo = (structHigh - curr) / range;
-
-  // 2. Phát hiện CHoCH (Change of Character)
-  var recentHigh = Math.max.apply(null, hi.slice(-8));
-  var recentLow = Math.min.apply(null, lo.slice(-8));
-  var chochType = "NEUTRAL", chochBadge = "CHỜ PHÁ VỠ", chochTitle = "", chochDesc = "", chochLevel = prevStructHigh;
-  if(curr > prevStructHigh || recentHigh > prevStructHigh){
-    chochType = "BULL_CHOCH"; chochBadge = "BULLISH CHoCH";
-    chochLevel = +prevStructHigh.toFixed(dec);
-    chochTitle = "Xác nhận Bullish CHoCH trên mốc " + chochLevel;
-    chochDesc = "Giá đã phá vỡ đỉnh cấu trúc giảm gần nhất (" + chochLevel + "), xác nhận phe Mua đã giành quyền kiểm soát xu hướng.";
-  } else if(curr < prevStructLow || recentLow < prevStructLow){
-    chochType = "BEAR_CHOCH"; chochBadge = "BEARISH CHoCH";
-    chochLevel = +prevStructLow.toFixed(dec);
-    chochTitle = "Cảnh báo Bearish CHoCH dưới mốc " + chochLevel;
-    chochDesc = "Giá đã xuyên thủng đáy cấu trúc tăng (" + chochLevel + "), cấu trúc chuyển sang suy yếu, tuyệt đối không bắt đáy sớm.";
-  } else {
-    chochLevel = +prevStructHigh.toFixed(dec);
-    chochTitle = "Tích lũy trong biên độ cấu trúc (Chưa CHoCH)";
-    chochDesc = "Giá đang nén giữa đáy cấu trúc " + prevStructLow.toFixed(dec) + " và đỉnh " + prevStructHigh.toFixed(dec) + ". Chờ bứt phá qua " + prevStructHigh.toFixed(dec) + " để xác nhận CHoCH tăng.";
-  }
-
-  // 3. Quét tìm SCOB (Single Candle Order Block — nến quét thanh khoản râu dưới dài rồi rút chân đóng xanh)
-  var scobHigh = null, scobLow = null, scobFound = false;
-  for(var i = candles.length - 2; i >= Math.max(5, candles.length - 25); i--){
-    var c = candles[i], prevC = candles[i - 1], nextC = candles[i + 1];
-    var lowerWick = Math.min(c.open, c.close) - c.low;
-    var totalLen = (c.high - c.low) || 0.0001;
-    // Điều kiện SCOB chuẩn: râu dưới quét thấp hơn nến trước (>= 40% thân nến) và nến sau đóng cửa vượt đỉnh nến SCOB
-    if(c.low < prevC.low && (lowerWick / totalLen) >= 0.35 && nextC.close > c.high){
-      scobHigh = +c.high.toFixed(dec);
-      scobLow = +c.low.toFixed(dec);
-      scobFound = true;
-      break;
+  for(var i = 0; i < watchlist.length; i++){
+    var sym = watchlist[i];
+    var mkt = detectMarket(sym);
+    var candles = mkt.type === "VN" ? await fetchVnCandles(mkt.vnSym, "D") : await fetchGlobalCandles(mkt.yahoo, "D");
+    if(candles && candles.length >= 20){
+      results.push(computeAutoDecision(mkt, candles, false));
     }
   }
-  if(!scobFound){
-    // Lấy nến đáy thấp nhất vùng hồi quy làm vùng SCOB/OB tham chiếu
-    var minIdx = candles.length - 2;
-    for(var j = candles.length - 2; j >= Math.max(2, candles.length - 20); j--){
-      if(candles[j].low < candles[minIdx].low) minIdx = j;
-    }
-    scobHigh = +candles[minIdx].high.toFixed(dec);
-    scobLow = +candles[minIdx].low.toFixed(dec);
-  }
-  var scobBadge = scobFound ? "CÓ SCOB CHUẨN" : "OB ĐÁY CẤU TRÚC";
-  var scobTitle = "Vùng SCOB: " + scobLow + " – " + scobHigh;
-  var scobDesc = scobFound
-    ? "Phát hiện nến đơn quét thanh khoản đáy " + scobLow + " và đảo chiều mạnh. Mép trên SCOB (" + scobHigh + ") là điểm kê lệnh Entry tối ưu, SL đặt ngay dưới râu nến " + scobLow + "."
-    : "Vùng Order Block đáy gần nhất nằm tại " + scobLow + " – " + scobHigh + ". Canh giá hồi về mép trên " + scobHigh + " để mở vị thế, SL dưới " + scobLow + ".";
 
-  // 4. Vùng FLIP (S/R Flip & Supply-to-Demand Flip)
-  var midFlip = +((structHigh + structLow) / 2).toFixed(dec);
-  var flipZoneLow = +(midFlip * (isFx ? 0.9985 : 0.99)).toFixed(dec);
-  var flipZoneHigh = +(midFlip * (isFx ? 1.0015 : 1.01)).toFixed(dec);
-  var isAboveFlip = curr >= midFlip;
-  var flipBadge = isAboveFlip ? "BULLISH FLIP" : "RESISTANCE FLIP";
-  var flipTitle = "Vùng FLIP tại " + flipZoneLow + " – " + flipZoneHigh;
-  var flipDesc = isAboveFlip
-    ? "Vùng kháng cự cũ quanh " + midFlip + " đã bị phá vỡ và chuyển hóa (FLIP) thành vùng hỗ trợ mới. Nhịp hồi về " + flipZoneLow + " – " + flipZoneHigh + " là điểm vào an toàn."
-    : "Vùng " + flipZoneLow + " – " + flipZoneHigh + " đang đóng vai trò vùng FLIP kháng cự phía trên. Cần vượt qua vùng này để mở rộng đà tăng.";
-
-  // 5. Vùng Chuyển Đổi Cung – Cầu (Supply-to-Demand Transition Zone)
-  var sdLow = +(structLow + range * 0.15).toFixed(dec);
-  var sdHigh = +(structLow + range * 0.35).toFixed(dec);
-  var sdBadge = curr > sdHigh ? "CẦU ÁP ĐẢO CUNG" : "TẠI VÙNG CẦU";
-  var sdTitle = "Vùng Chuyển Đổi Cung Cầu: " + sdLow + " – " + sdHigh;
-  var sdDesc = "Khu vực dòng tiền tổ chức hấp thụ toàn bộ lực bán (Imbalance/FVG) tại " + sdLow + " – " + sdHigh + " và đẩy giá đi lên. Đây là chốt chặn bảo vệ xu hướng tăng.";
-
-  // 6. Vùng Theo Cấu Trúc (Protected Low / High)
-  var structBadge = curr > ma20 ? "CẤU TRÚC TĂNG" : "CẤU TRÚC ĐIỀU CHỈNH";
-  var structTitle = "Đáy Cấu Trúc: " + structLow.toFixed(dec) + " | Đỉnh: " + structHigh.toFixed(dec);
-  var structDesc = "Đáy được bảo vệ (Protected Low) tại " + structLow.toFixed(dec) + ". Nếu giá thủng mốc này, cấu trúc tăng bị phá vỡ hoàn toàn — bắt buộc đặt Cắt lỗ (SL) dưới đáy cấu trúc.";
-
-  // 7. Vùng Mua (Demand/Discount) & Vùng Bán (Supply/Premium)
-  var buyZoneLow = +structLow.toFixed(dec);
-  var buyZoneHigh = +(structLow + range * 0.45).toFixed(dec);
-  var sellZoneLow = +(structLow + range * 0.78).toFixed(dec);
-  var sellZoneHigh = +structHigh.toFixed(dec);
-  var inBuyZone = curr <= buyZoneHigh;
-  var inSellZone = curr >= sellZoneLow;
-  var zoneBadge = inBuyZone ? "TẠI VÙNG MUA (DEMAND)" : (inSellZone ? "TẠI VÙNG BÁN (SUPPLY)" : "VÙNG TRUNG TÍNH");
-  var zoneTitle = "Vùng Mua: " + buyZoneLow + "–" + buyZoneHigh + " | Vùng Bán: " + sellZoneLow + "–" + sellZoneHigh;
-  var zoneDesc = inBuyZone
-    ? "Giá đang nằm trực tiếp trong Vùng Mua (Discount/Demand), tỷ lệ R:R cực kỳ hấp dẫn để giải ngân."
-    : (inSellZone ? "Giá đã tiến sát Vùng Bán (Supply/Premium) " + sellZoneLow + "–" + sellZoneHigh + ", ưu tiên chốt lời thay vì mua đuổi." : "Giá đang ở giữa biên độ, canh nhịp điều chỉnh về Vùng Mua hoặc vùng SCOB/FLIP để vào lệnh.");
-
-  // Tính điểm hợp lưu SMC tổng hợp
-  var sc = 50;
-  if(chochType === "BULL_CHOCH") sc += 15;
-  if(chochType === "BEAR_CHOCH") sc -= 18;
-  if(scobFound) sc += 12;
-  if(isAboveFlip) sc += 8;
-  if(inBuyZone) sc += 10;
-  if(inSellZone) sc -= 8;
-  if(curr > ma20) sc += 7;
-  sc = Math.max(15, Math.min(96, Math.round(sc)));
-
-  // Xác định Điểm Vào (Entry) & Cắt Lỗ (SL) theo SCOB + Cấu trúc
-  var entry, sl, entryBasis, slBasis;
-  if(sc >= 65){
-    // Ưu tiên điểm vào tại mép trên SCOB hoặc vùng FLIP gần giá hiện tại
-    var candidateEntry = (scobHigh <= curr && scobHigh >= curr * 0.94) ? scobHigh : Math.min(curr, (curr + flipZoneHigh) / 2);
-    entry = +candidateEntry.toFixed(dec);
-    sl = +(Math.min(scobLow, structLow) * (isFx ? 0.997 : 0.985)).toFixed(dec);
-    entryBasis = scobFound ? "Mép trên SCOB / FLIP" : "Vùng FLIP & MA20";
-    slBasis = "Dưới râu SCOB (" + scobLow + ") & Đáy cấu trúc";
-  } else if(sc >= 48){
-    entry = +Math.max(scobHigh, sdHigh).toFixed(dec);
-    if(entry > curr) entry = +(curr * (isFx ? 0.996 : 0.98)).toFixed(dec);
-    sl = +(structLow * (isFx ? 0.996 : 0.98)).toFixed(dec);
-    entryBasis = "Chờ hồi về SCOB / Vùng Cầu";
-    slBasis = "Dưới đáy cấu trúc " + structLow.toFixed(dec);
-  } else {
-    entry = +scobHigh.toFixed(dec);
-    sl = +(structLow * (isFx ? 0.995 : 0.975)).toFixed(dec);
-    entryBasis = "Đợi tạo đáy & CHoCH tăng";
-    slBasis = "Dưới đáy bảo vệ " + structLow.toFixed(dec);
-  }
-
-  var minRisk = isFx ? entry * 0.0025 : entry * 0.015;
-  var rk = Math.max(Math.abs(entry - sl), minRisk);
-  var tp1 = +(Math.max(entry + rk * 2.0, sellZoneLow)).toFixed(dec);
-  var tp2 = +(Math.max(entry + rk * 3.2, sellZoneHigh)).toFixed(dec);
-
-  var rec = sc >= 68 ? "MUA ĐẠT CHUẨN (BUY)" : (sc >= 48 ? "CHỜ MUA TẠI SCOB/FLIP" : "ĐỨNG NGOÀI / CHỜ CHoCH");
-  var cls = sc >= 68 ? "bg-emerald-950 text-emerald-400 border-emerald-600" : (sc >= 48 ? "bg-amber-950 text-amber-400 border-amber-600" : "bg-rose-950 text-rose-400 border-rose-600");
-
-  return {
-    sym: mkt.display, mkt: mkt, isFx: isFx, isIntraday: isIntraday, curr: +curr.toFixed(dec), sc: sc, rec: rec, cls: cls,
-    entry: entry, sl: sl, tp1: tp1, tp2: tp2, entryBasis: entryBasis, slBasis: slBasis, candles: candles,
-    flipLevel: midFlip, sellZoneLow: sellZoneLow, scobLow: scobLow, scobHigh: scobHigh,
-    sum: "Khung [" + curTF + "] • Hợp lưu SMC " + sc + "/100đ (" + chochBadge + " • " + scobBadge + "). Vào lệnh quanh " + entry + ", SL dưới " + sl + ".",
-    chochBadge: chochBadge, chochTitle: chochTitle, chochDesc: chochDesc,
-    scobBadge: scobBadge, scobTitle: scobTitle, scobDesc: scobDesc,
-    flipBadge: flipBadge, flipTitle: flipTitle, flipDesc: flipDesc,
-    sdBadge: sdBadge, sdTitle: sdTitle, sdDesc: sdDesc,
-    structBadge: structBadge, structTitle: structTitle, structDesc: structDesc,
-    zoneBadge: zoneBadge, zoneTitle: zoneTitle, zoneDesc: zoneDesc,
-    tEl: curr > ma20 ? "Sóng Đẩy Tăng Trưởng (Sóng 3/5)" : "Sóng Điều Chỉnh A-B-C",
-    dEl: curr > ma20 ? "Hoàn tất nhịp chỉnh và bật tăng theo cấu trúc đỉnh cao hơn." : "Đang hiệu chỉnh ngắn hạn, đợi tạo đáy cao hơn.",
-    tSmc: scobFound ? "Quét Thanh Khoản (Liquidity Sweep)" : "Cân Bằng Cung Cầu (FVG)",
-    dSmc: "Vùng thanh khoản đáy tại " + structLow.toFixed(dec) + " và đỉnh tại " + structHigh.toFixed(dec) + ".",
-    tWy: curr >= ma20 ? "Pha D: Đẩy Giá (Markup)" : "Pha B/C: Tích Lũy & Spring",
-    dWy: curr >= ma20 ? "Lực cầu chủ động nâng đỡ giá trên MA20." : "Đi ngang hấp thụ cung, đợi phiên bùng nổ khối lượng.",
-    tFi: (curr > ma20 ? "Trên MA20 (" : "Dưới MA20 (") + ma20.toFixed(dec) + ")",
-    dFi: "MA50 hiện tại ở mức " + ma50.toFixed(dec) + " • Fibo hồi quy: " + fibo.toFixed(2) + "."
-  };
+  results.sort(function(a, b){ return b.prob - a.prob; });
+  tbody.innerHTML = "";
+  results.forEach(function(r){
+    var badgeCls = r.prob >= 66 ? "text-emerald-400" : (r.prob >= 48 ? "text-amber-400" : "text-rose-400");
+    tbody.innerHTML += '<tr class="hover:bg-slate-800/50">' +
+      '<td class="py-2.5 px-2 font-bold text-white">' + r.sym + '</td>' +
+      '<td class="py-2.5 px-2 font-mono text-sky-300">' + r.curr + '</td>' +
+      '<td class="py-2.5 px-2 font-bold ' + badgeCls + '">' + r.action + '</td>' +
+      '<td class="py-2.5 px-2 font-mono font-bold text-white">' + r.entry + '</td>' +
+      '<td class="py-2.5 px-2 font-mono font-bold text-rose-400">' + r.sl + '</td>' +
+      '<td class="py-2.5 px-2 font-mono text-emerald-400">' + r.tp1 + '</td>' +
+      '<td class="py-2.5 px-2 font-bold ' + badgeCls + '">' + r.prob + '%</td>' +
+      '<td class="py-2.5 px-2"><button onclick="pick(\'' + r.sym.split(" ")[0] + '\')" class="px-2.5 py-1 rounded bg-blue-600 hover:bg-blue-500 text-white font-bold cursor-pointer">Xem Chi Tiết</button></td>' +
+    '</tr>';
+  });
 }
 
 function showPlan(p){
@@ -654,20 +618,26 @@ function showPlan(p){
     return isFx ? (sign + "$" + abs.toFixed(2)) : (sign + Math.round(abs).toLocaleString("vi-VN") + " đ");
   }
 
+  document.getElementById("verdict-card").className = p.cardBorder;
   document.getElementById("r-sym").innerText = p.sym;
   document.getElementById("r-price").innerText = p.curr;
-  document.getElementById("r-rec").innerText = p.rec;
-  document.getElementById("r-rec").className = "px-3 py-1 rounded text-xs font-bold border " + p.cls;
-  document.getElementById("r-sum").innerText = p.sum;
-  document.getElementById("r-score").innerText = p.sc + "/100";
+  document.getElementById("r-action").innerText = p.action;
+  document.getElementById("r-action").className = "px-4 py-1.5 rounded-lg text-sm font-black border uppercase tracking-wide " + p.actionBadge;
+  document.getElementById("r-reason").innerText = p.reason;
+  document.getElementById("r-score").innerText = p.prob + "%";
+
+  document.getElementById("r-order-type").innerText = p.orderType;
   document.getElementById("r-entry").innerText = p.entry;
-  document.getElementById("r-entry-basis").innerText = p.entryBasis;
+  document.getElementById("r-entry-why").innerText = p.entryWhy;
+
   document.getElementById("r-sl").innerText = p.sl;
-  document.getElementById("r-slpct").innerText = "-" + ((dist/p.entry)*100).toFixed(2) + "% (" + p.slBasis + ")";
+  document.getElementById("r-slpct").innerText = "Khoảng SL: -" + ((dist/p.entry)*100).toFixed(2) + "%";
+  document.getElementById("r-sl-why").innerText = p.slWhy;
+
   document.getElementById("r-tp1").innerText = p.tp1;
-  document.getElementById("r-rr1").innerText = "R:R = 1 : " + (Math.abs(p.tp1-p.entry)/dist).toFixed(2);
+  document.getElementById("r-rr1").innerText = "R:R 1:" + (Math.abs(p.tp1-p.entry)/dist).toFixed(1);
   document.getElementById("r-tp2").innerText = p.tp2;
-  document.getElementById("r-rr2").innerText = "R:R = 1 : " + (Math.abs(p.tp2-p.entry)/dist).toFixed(2);
+  document.getElementById("r-rr2").innerText = "R:R 1:" + (Math.abs(p.tp2-p.entry)/dist).toFixed(1);
   document.getElementById("r-vol").innerText = volText;
 
   var nowEl = document.getElementById("pnl-now");
@@ -678,19 +648,12 @@ function showPlan(p){
   document.getElementById("pnl-tp1").innerText = fmtMoney(profit1, p.isFx);
   document.getElementById("pnl-tp2").innerText = fmtMoney(profit2, p.isFx);
 
-  // 6 thẻ cấu trúc SMC
-  document.getElementById("b-choch").innerText = p.chochBadge; document.getElementById("t-choch").innerText = p.chochTitle; document.getElementById("d-choch").innerText = p.chochDesc;
-  document.getElementById("b-scob").innerText = p.scobBadge; document.getElementById("t-scob").innerText = p.scobTitle; document.getElementById("d-scob").innerText = p.scobDesc;
-  document.getElementById("b-flip").innerText = p.flipBadge; document.getElementById("t-flip").innerText = p.flipTitle; document.getElementById("d-flip").innerText = p.flipDesc;
-  document.getElementById("b-sd").innerText = p.sdBadge; document.getElementById("t-sd").innerText = p.sdTitle; document.getElementById("d-sd").innerText = p.sdDesc;
-  document.getElementById("b-struct").innerText = p.structBadge; document.getElementById("t-struct").innerText = p.structTitle; document.getElementById("d-struct").innerText = p.structDesc;
-  document.getElementById("b-zone").innerText = p.zoneBadge; document.getElementById("t-zone").innerText = p.zoneTitle; document.getElementById("d-zone").innerText = p.zoneDesc;
-
-  // 4 thẻ bổ trợ
-  document.getElementById("t-el").innerText = p.tEl; document.getElementById("d-el").innerText = p.dEl;
-  document.getElementById("t-smc").innerText = p.tSmc; document.getElementById("d-smc").innerText = p.dSmc;
-  document.getElementById("t-wy").innerText = p.tWy; document.getElementById("d-wy").innerText = p.dWy;
-  document.getElementById("t-fi").innerText = p.tFi; document.getElementById("d-fi").innerText = p.dFi;
+  document.getElementById("ev-choch").innerText = p.evChoch;
+  document.getElementById("ev-scob").innerText = p.evScob;
+  document.getElementById("ev-flip").innerText = p.evFlip;
+  document.getElementById("ev-sd").innerText = p.evSd;
+  document.getElementById("ev-struct").innerText = p.evStruct;
+  document.getElementById("ev-macro").innerText = p.evMacro;
 }
 
 function drawChart(p){
@@ -699,7 +662,7 @@ function drawChart(p){
   if(!p.candles.length || !window.LightweightCharts) return;
 
   activeChart = LightweightCharts.createChart(box, {
-    width: box.clientWidth || 800, height: 490,
+    width: box.clientWidth || 800, height: 460,
     layout: { background: { color: "#0b1120" }, textColor: "#cbd5e1" },
     grid: { vertLines: { color: "#1e293b" }, horzLines: { color: "#1e293b" } },
     timeScale: { timeVisible: p.isIntraday, secondsVisible: false },
@@ -711,11 +674,8 @@ function drawChart(p){
   });
   activeSeries.setData(p.candles);
 
-  // Vẽ các đường cấu trúc SMC & kế hoạch lệnh lên biểu đồ
-  activeSeries.createPriceLine({ price: p.entry, color: "#38bdf8", lineWidth: 2, lineStyle: 2, title: "ENTRY (" + p.entryBasis + ")" });
-  activeSeries.createPriceLine({ price: p.sl, color: "#f43f5e", lineWidth: 2, lineStyle: 2, title: "SL (CẤU TRÚC)" });
-  activeSeries.createPriceLine({ price: p.flipLevel, color: "#c084fc", lineWidth: 1, lineStyle: 3, title: "VÙNG FLIP" });
-  activeSeries.createPriceLine({ price: p.sellZoneLow, color: "#facc15", lineWidth: 1, lineStyle: 3, title: "VÙNG BÁN (SUPPLY)" });
+  activeSeries.createPriceLine({ price: p.entry, color: "#38bdf8", lineWidth: 3, lineStyle: 0, title: "CHỐT ENTRY" });
+  activeSeries.createPriceLine({ price: p.sl, color: "#f43f5e", lineWidth: 3, lineStyle: 0, title: "CHỐT SL" });
   activeSeries.createPriceLine({ price: p.tp1, color: "#10b981", lineWidth: 2, lineStyle: 2, title: "TP1" });
   activeSeries.createPriceLine({ price: p.tp2, color: "#34d399", lineWidth: 1, lineStyle: 3, title: "TP2" });
   activeChart.timeScale().fitContent();
@@ -735,10 +695,10 @@ async function tickRealtimeUpdate(){
   curPlan.curr = +lastBar.close.toFixed(curPlan.mkt.dec);
   var priceEl = document.getElementById("r-price");
   priceEl.innerText = curPlan.curr;
-  if(curPlan.curr > prev) priceEl.className = "text-2xl font-mono font-extrabold text-emerald-400 px-2.5 py-0.5 rounded bg-emerald-950/50 border border-emerald-700";
-  else if(curPlan.curr < prev) priceEl.className = "text-2xl font-mono font-extrabold text-rose-400 px-2.5 py-0.5 rounded bg-rose-950/50 border border-rose-700";
+  if(curPlan.curr > prev) priceEl.className = "text-2xl font-mono font-extrabold text-emerald-400 px-3 py-0.5 rounded-lg bg-emerald-950/50 border border-emerald-700";
+  else if(curPlan.curr < prev) priceEl.className = "text-2xl font-mono font-extrabold text-rose-400 px-3 py-0.5 rounded-lg bg-rose-950/50 border border-rose-700";
 
-  document.getElementById("live-tick-info").innerText = "● Cập nhật lúc " + new Date().toLocaleTimeString("vi-VN");
+  document.getElementById("live-tick-info").innerText = "● Live " + new Date().toLocaleTimeString("vi-VN");
   showPlan(curPlan);
   updateLogsWithLivePrice(curPlan.sym, curPlan.curr);
 }
@@ -762,7 +722,7 @@ function saveSignalToLog(){
   });
   localStorage.setItem("alphadesk_pnl_logs", JSON.stringify(logs));
   renderLogs();
-  alert("✅ Đã lưu lệnh " + curPlan.sym + " (Entry: " + curPlan.entry + ") vào Sổ Đối Soát Lãi/Lỗ!");
+  alert("✅ Đã chốt & lưu lệnh " + curPlan.sym + " (Entry: " + curPlan.entry + " | SL: " + curPlan.sl + ") vào Sổ Theo Dõi!");
 }
 
 function clearLogs(){ localStorage.removeItem("alphadesk_pnl_logs"); renderLogs(); }
@@ -773,7 +733,7 @@ function renderLogs(){
   var sumVn = 0, sumFx = 0;
 
   if(!logs.length){
-    tbody.innerHTML = '<tr><td colspan="9" class="py-5 text-center text-slate-500">Chưa có lệnh nào được lưu. Bấm "💾 Lưu Vào Sổ Theo Dõi Lãi/Lỗ" ở phía trên để theo dõi.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9" class="py-5 text-center text-slate-500">Chưa có lệnh nào được chốt lưu. Bấm "💾 Khớp & Theo Dõi Lãi/Lỗ" ở phía trên để theo dõi.</td></tr>';
   }
 
   logs.forEach(function(item){
