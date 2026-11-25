@@ -3,16 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AlphaDeskPro V6.0 — Tự Động Chốt Điểm Vào & Cắt Lỗ</title>
+  <title>AlphaDeskPro V6.1 — Đa Khung Thời Gian CK Việt & Forex/Vàng</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
   <style>
     body { background: #0b1120; color: #e2e8f0; font-family: system-ui, sans-serif; }
     .card { background: #111827; border: 1px solid #1e293b; border-radius: 12px; }
     .inp { background: #090d16; border: 1px solid #334155; color: #fff; border-radius: 8px; padding: 9px 12px; width: 100%; }
-    .tf-btn { padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; }
-    .tf-active { background: #2563eb; color: #fff; }
+    .tf-btn { padding: 5px 11px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s; }
+    .tf-active { background: #2563eb; color: #fff; box-shadow: 0 0 10px rgba(37,99,235,0.5); }
     .tf-idle { background: #1e293b; color: #94a3b8; }
+    .tf-idle:hover { background: #334155; color: #fff; }
     @keyframes pulseDot { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
     .live-dot { animation: pulseDot 1.2s infinite; }
   </style>
@@ -24,10 +25,10 @@
       <h1 class="text-xl font-bold text-white flex items-center gap-2">
         AlphaDesk<span class="text-sky-400">Pro</span>
         <span class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-700 flex items-center gap-1.5">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 live-dot"></span> V6.0 AUTO-DECISION ENGINE
+          <span class="w-2 h-2 rounded-full bg-emerald-400 live-dot"></span> V6.1 MULTI-TF SYNC
         </span>
       </h1>
-      <p class="text-xs text-slate-400">Hệ Thống Tự Động Chốt Cứng Điểm Vào (Entry) & Điểm Cắt Lỗ (SL) Từ 10 Tầng Dữ Liệu SMC • Elliott • Wyckoff</p>
+      <p class="text-xs text-slate-400">Tự Động Chốt Điểm Vào & Cắt Lỗ • Đa Khung Thời Gian Cho Cả Chứng Khoán Việt & Forex/Vàng/Crypto</p>
     </div>
     <div class="flex items-center gap-3 text-xs text-slate-400">
       <button id="btn-live-toggle" onclick="toggleRealtime()" class="px-3 py-1.5 rounded-lg bg-emerald-950 text-emerald-300 border border-emerald-700 font-bold cursor-pointer">
@@ -47,27 +48,38 @@
     </div>
   </div>
 
-  <!-- Ô nhập mã + Quét toàn thị trường -->
+  <!-- Ô nhập mã + Thanh chọn khung thời gian chung -->
   <div class="card p-5 mb-5 border-blue-900/60">
-    <div class="flex flex-wrap justify-between items-center gap-2 mb-2">
-      <h2 class="text-base font-bold text-white">🎯 Chọn Mã Cần Hệ Thống Chốt Điểm Vào & Cắt Lỗ</h2>
-      <button onclick="scanAllMarkets()" class="px-3.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold cursor-pointer">
-        🔍 Tự Động Quét Tìm Kèo Đẹp Nhất Toàn Danh Mục
-      </button>
+    <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
+      <h2 class="text-base font-bold text-white">🎯 Chọn Mã & Khung Thời Gian Phân Tích</h2>
+      <div class="flex flex-wrap items-center gap-1.5 bg-slate-950 p-1.5 rounded-lg border border-slate-800">
+        <span class="text-xs text-slate-400 px-1.5 font-semibold">Khung thời gian:</span>
+        <button id="top-tf-1" onclick="setTF('1')" class="tf-btn tf-idle">1m</button>
+        <button id="top-tf-5" onclick="setTF('5')" class="tf-btn tf-idle">5m</button>
+        <button id="top-tf-15" onclick="setTF('15')" class="tf-btn tf-idle">15m</button>
+        <button id="top-tf-30" onclick="setTF('30')" class="tf-btn tf-idle">30m</button>
+        <button id="top-tf-60" onclick="setTF('60')" class="tf-btn tf-idle">1H</button>
+        <button id="top-tf-240" onclick="setTF('240')" class="tf-btn tf-idle">4H</button>
+        <button id="top-tf-D" onclick="setTF('D')" class="tf-btn tf-active">1D</button>
+        <button id="top-tf-W" onclick="setTF('W')" class="tf-btn tf-idle">1W</button>
+      </div>
     </div>
+
     <div class="flex flex-col sm:flex-row gap-3 mb-3">
-      <input id="sym-inp" type="text" value="HPG" placeholder="Nhập mã: BTC/USD, USOIL, XAU/USD, EUR/USD, MBB, TCB, VCB, HPG..." onkeydown="if(event.key==='Enter') analyze()" class="inp font-mono text-base font-bold uppercase">
+      <input id="sym-inp" type="text" value="XAU/USD" placeholder="Nhập mã: XAU/USD, BTC/USD, USOIL, EUR/USD, GBP/USD, MBB, TCB, VCB, HPG..." onkeydown="if(event.key==='Enter') analyze()" class="inp font-mono text-base font-bold uppercase">
       <button onclick="analyze()" class="px-6 py-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm whitespace-nowrap cursor-pointer">⚡ Chốt Lệnh Tự Động Ngay</button>
     </div>
+
     <div class="space-y-2 text-xs">
       <div class="flex flex-wrap items-center gap-1.5">
-        <span class="text-amber-400 font-semibold w-32">Quốc tế & Crypto:</span>
+        <span class="text-amber-400 font-semibold w-32">Forex, Vàng & BTC:</span>
+        <button onclick="pick('XAU/USD')" class="px-2.5 py-1 rounded bg-yellow-950/80 hover:bg-yellow-800 text-yellow-300 border border-yellow-700/70 font-semibold">XAU/USD (Vàng)</button>
         <button onclick="pick('BTC/USD')" class="px-2.5 py-1 rounded bg-orange-950/80 hover:bg-orange-800 text-orange-300 border border-orange-700/70 font-semibold">Bitcoin (BTC/USD)</button>
         <button onclick="pick('USOIL')" class="px-2.5 py-1 rounded bg-purple-950/80 hover:bg-purple-800 text-purple-300 border border-purple-700/70 font-semibold">USOIL (Dầu WTI)</button>
-        <button onclick="pick('XAU/USD')" class="px-2.5 py-1 rounded bg-yellow-950/80 hover:bg-yellow-800 text-yellow-300 border border-yellow-700/70 font-semibold">XAU/USD (Vàng)</button>
         <button onclick="pick('EUR/USD')" class="px-2.5 py-1 rounded bg-amber-950/70 hover:bg-amber-800 text-amber-300 border border-amber-800/60 font-semibold">EUR/USD</button>
         <button onclick="pick('GBP/USD')" class="px-2.5 py-1 rounded bg-amber-950/70 hover:bg-amber-800 text-amber-300 border border-amber-800/60 font-semibold">GBP/USD</button>
         <button onclick="pick('USD/JPY')" class="px-2.5 py-1 rounded bg-amber-950/70 hover:bg-amber-800 text-amber-300 border border-amber-800/60 font-semibold">USD/JPY</button>
+        <button onclick="pick('AUD/USD')" class="px-2.5 py-1 rounded bg-amber-950/70 hover:bg-amber-800 text-amber-300 border border-amber-800/60 font-semibold">AUD/USD</button>
       </div>
       <div class="flex flex-wrap items-center gap-1.5">
         <span class="text-sky-400 font-semibold w-32">Chứng khoán VN:</span>
@@ -83,39 +95,16 @@
     </div>
   </div>
 
-  <!-- Bảng quét tự động toàn danh mục (ẩn cho đến khi bấm Quét) -->
-  <div id="scanner-box" class="hidden card p-5 mb-5 border-indigo-700/70 overflow-x-auto">
-    <div class="flex justify-between items-center mb-3">
-      <h3 class="text-sm font-bold text-indigo-300 uppercase">🏆 Bảng Xếp Hạng Kèo Tự Động Toàn Danh Mục (Sắp Xếp Theo Độ Tin Cậy Cao Nhất)</h3>
-      <button onclick="document.getElementById('scanner-box').classList.add('hidden')" class="text-xs text-slate-400 hover:text-white">✕ Đóng</button>
-    </div>
-    <table class="w-full text-left border-collapse text-xs">
-      <thead>
-        <tr class="border-b border-slate-800 uppercase text-slate-400">
-          <th class="py-2.5 px-2">Mã</th>
-          <th class="py-2.5 px-2">Giá Live</th>
-          <th class="py-2.5 px-2">Quyết Định Tự Động</th>
-          <th class="py-2.5 px-2">Điểm Vào Chốt</th>
-          <th class="py-2.5 px-2">Cắt Lỗ Chốt</th>
-          <th class="py-2.5 px-2">Chốt Lời TP1</th>
-          <th class="py-2.5 px-2">Độ Tin Cậy</th>
-          <th class="py-2.5 px-2">Mở Lệnh</th>
-        </tr>
-      </thead>
-      <tbody id="scanner-tbody" class="divide-y divide-slate-800/70"></tbody>
-    </table>
-  </div>
-
   <div id="status-box" class="hidden mb-4 p-4 rounded-xl bg-slate-900 border border-slate-700 text-sm text-sky-400"></div>
 
   <!-- KẾT QUẢ CHỐT LỆNH TỰ ĐỘNG -->
   <div id="res-box" class="hidden space-y-5">
 
-    <!-- KHỐI CHỐT LỆNH TUYỆT ĐỐI (KHÔNG CẦN TỰ PHÂN TÍCH) -->
+    <!-- KHỐI CHỐT LỆNH TUYỆT ĐỐI -->
     <div id="verdict-card" class="card p-6 border-2 border-emerald-600/80 shadow-xl">
       <div class="flex flex-wrap justify-between items-start gap-4 pb-5 mb-5 border-b border-slate-800">
         <div>
-          <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">🤖 Quyết Định Cuối Cùng Của Hệ Thống</div>
+          <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">🤖 Quyết Định Cuối Cùng Của Hệ Thống • Khung <span id="r-tf-label" class="text-sky-400 font-bold">1D</span></div>
           <div class="flex flex-wrap items-center gap-3">
             <h2 id="r-sym" class="text-3xl font-black text-white">--</h2>
             <span id="r-price" class="text-2xl font-mono font-extrabold text-sky-400 px-3 py-0.5 rounded-lg bg-slate-950 border border-slate-800">--</span>
@@ -209,19 +198,21 @@
       </div>
     </div>
 
-    <!-- BIỂU ĐỒ KẺ SẴN ĐIỂM VÀO & ĐIỂM CẮT LỖ -->
+    <!-- BIỂU ĐỒ KẺ SẴN ĐIỂM VÀO & ĐIỂM CẮT LỖ + THANH CHỌN ĐA KHUNG THỜI GIAN -->
     <div class="card p-4">
       <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
         <div class="text-sm font-bold text-white flex flex-wrap items-center gap-2">
-          <span>📈 Biểu Đồ Kẻ Sẵn Điểm Vào & Điểm Cắt Lỗ</span>
+          <span>📈 Biểu Đồ Kẻ Sẵn Điểm Vào & Điểm Cắt Lỗ — <span id="chart-sym-title" class="text-sky-400">--</span></span>
           <span class="text-[11px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">● LIVE</span>
         </div>
-        <div class="flex items-center gap-1.5">
-          <span class="text-xs text-slate-400 mr-1">Khung:</span>
+        <div class="flex flex-wrap items-center gap-1.5">
+          <span class="text-xs text-slate-400 mr-1">Đổi khung:</span>
           <button id="tf-1" onclick="setTF('1')" class="tf-btn tf-idle">1m</button>
+          <button id="tf-5" onclick="setTF('5')" class="tf-btn tf-idle">5m</button>
           <button id="tf-15" onclick="setTF('15')" class="tf-btn tf-idle">15m</button>
           <button id="tf-30" onclick="setTF('30')" class="tf-btn tf-idle">30m</button>
           <button id="tf-60" onclick="setTF('60')" class="tf-btn tf-idle">1H</button>
+          <button id="tf-240" onclick="setTF('240')" class="tf-btn tf-idle">4H</button>
           <button id="tf-D" onclick="setTF('D')" class="tf-btn tf-active">1D</button>
           <button id="tf-W" onclick="setTF('W')" class="tf-btn tf-idle">1W</button>
         </div>
@@ -229,10 +220,10 @@
       <div id="chart-box" class="w-full h-[460px] rounded-lg overflow-hidden border border-slate-800 bg-[#0b1120]"></div>
     </div>
 
-    <!-- CHI TIẾT BẰNG CHỨNG KỸ THUẬT (TÓM TẮT GỌN ĐỂ ĐỐI CHIẾU KHI CẦN) -->
+    <!-- CHI TIẾT BẰNG CHỨNG KỸ THUẬT -->
     <details class="card p-4" open>
       <summary class="text-xs font-bold text-slate-300 uppercase cursor-pointer select-none">
-        📋 Xem Bằng Chứng Kỹ Thuật Đã Hợp Lưu (CHoCH • SCOB • FLIP • Cung Cầu • Cấu Trúc • Elliott • Wyckoff)
+        📋 Bằng Chứng Kỹ Thuật Đã Hợp Lưu (CHoCH • SCOB • FLIP • Cung Cầu • Cấu Trúc • Elliott • Wyckoff)
       </summary>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4 text-xs">
         <div class="p-3 rounded-lg bg-slate-950 border border-slate-800"><span class="text-sky-400 font-bold">1. CHoCH:</span> <span id="ev-choch" class="text-slate-300">--</span></div>
@@ -280,6 +271,7 @@
 setInterval(function(){ document.getElementById("clock").innerText = new Date().toLocaleTimeString("vi-VN"); }, 1000);
 var curPlan = null, curTF = "D", liveEnabled = true, liveTimer = null;
 var activeChart = null, activeSeries = null;
+var reqToken = 0; // Mã định danh chống lẫn dữ liệu giữa các lần bấm mã
 
 function toggleRealtime(){
   liveEnabled = !liveEnabled;
@@ -297,11 +289,18 @@ function stopLiveStream(){ if(liveTimer){ clearInterval(liveTimer); liveTimer = 
 function pick(s){ document.getElementById("sym-inp").value = s; analyze(); }
 function setTF(tf){
   curTF = tf;
-  ["1","15","30","60","D","W"].forEach(function(k){
-    var b = document.getElementById("tf-" + k);
-    if(b) b.className = "tf-btn " + (k === tf ? "tf-active" : "tf-idle");
+  ["1","5","15","30","60","240","D","W"].forEach(function(k){
+    var b1 = document.getElementById("tf-" + k);
+    var b2 = document.getElementById("top-tf-" + k);
+    if(b1) b1.className = "tf-btn " + (k === tf ? "tf-active" : "tf-idle");
+    if(b2) b2.className = "tf-btn " + (k === tf ? "tf-active" : "tf-idle");
   });
   analyze();
+}
+
+function tfDisplayName(tf){
+  var map = { "1": "1m", "5": "5m", "15": "15m", "30": "30m", "60": "1H", "240": "4H", "D": "1D", "W": "1W" };
+  return map[tf] || tf;
 }
 
 function recalc(){
@@ -318,11 +317,11 @@ function detectMarket(raw){
   if(s === "TECHCOMBANK" || s === "TCBANK") s = "TCB";
   if(s === "VIETCOMBANK" || s === "VCBANK") s = "VCB";
 
-  if(s.indexOf("XAU") !== -1 || s === "GOLD" || s === "VANG") return { type: "GOLD", display: "XAU/USD", yahoo: "GC=F", contract: 100, dec: 2, unitName: "Lot" };
-  if(s.indexOf("XAG") !== -1 || s === "SILVER") return { type: "GOLD", display: "XAG/USD", yahoo: "SI=F", contract: 5000, dec: 3, unitName: "Lot" };
-  if(s === "USOIL" || s === "WTI" || s === "OIL" || s === "CL=F" || s === "DAU") return { type: "OIL", display: "USOIL (WTI)", yahoo: "CL=F", contract: 1000, dec: 2, unitName: "Lot" };
-  if(s.indexOf("BTC") !== -1 || s === "BITCOIN") return { type: "CRYPTO", display: "BTC/USD", yahoo: "BTC-USD", contract: 1, dec: 1, unitName: "BTC" };
-  if(s.indexOf("ETH") !== -1 || s === "ETHEREUM") return { type: "CRYPTO", display: "ETH/USD", yahoo: "ETH-USD", contract: 1, dec: 2, unitName: "ETH" };
+  if(s.indexOf("XAU") !== -1 || s === "GOLD" || s === "VANG") return { type: "GOLD", display: "XAU/USD", binance: "PAXGUSDT", yahoo: "GC=F", contract: 100, dec: 2, unitName: "Lot" };
+  if(s.indexOf("XAG") !== -1 || s === "SILVER") return { type: "COMMODITY", display: "XAG/USD", yahoo: "SI=F", contract: 5000, dec: 3, unitName: "Lot" };
+  if(s === "USOIL" || s === "WTI" || s === "OIL" || s === "CL=F" || s === "DAU") return { type: "COMMODITY", display: "USOIL (WTI)", yahoo: "CL=F", contract: 1000, dec: 2, unitName: "Lot" };
+  if(s.indexOf("BTC") !== -1 || s === "BITCOIN") return { type: "CRYPTO", display: "BTC/USD", binance: "BTCUSDT", yahoo: "BTC-USD", contract: 1, dec: 1, unitName: "BTC" };
+  if(s.indexOf("ETH") !== -1 || s === "ETHEREUM") return { type: "CRYPTO", display: "ETH/USD", binance: "ETHUSDT", yahoo: "ETH-USD", contract: 1, dec: 2, unitName: "ETH" };
 
   var fxClean = s.replace("/", "");
   var fxPairs = ["EURUSD","GBPUSD","USDJPY","AUDUSD","USDCAD","USDCHF","NZDUSD","EURJPY","GBPJPY","EURGBP"];
@@ -330,28 +329,53 @@ function detectMarket(raw){
     var disp = fxClean.length === 6 ? (fxClean.slice(0,3) + "/" + fxClean.slice(3)) : s;
     var isJpy = fxClean.indexOf("JPY") !== -1;
     var contractVal = isJpy ? 650 : 100000;
-    return { type: "FOREX", display: disp, yahoo: fxClean + "=X", contract: contractVal, dec: isJpy ? 3 : 5, unitName: "Lot" };
+    return { type: "FOREX", display: disp, fxBase: fxClean.slice(0,3), fxQuote: fxClean.slice(3), yahoo: fxClean + "=X", contract: contractVal, dec: isJpy ? 3 : 5, unitName: "Lot" };
   }
 
   var vnSym = s === "VN-INDEX" ? "VNINDEX" : s;
   return { type: "VN", display: vnSym, vnSym: vnSym, contract: 1000, dec: 2, unitName: "CP" };
 }
 
+// 1. Nguồn dữ liệu trực tiếp cho Vàng (PAXG/XAU) & Bitcoin đa khung thời gian (1m -> 1W)
+async function fetchSpotCandles(symbol, tf){
+  var map = { "1": "1m", "5": "5m", "15": "15m", "30": "30m", "60": "1h", "240": "4h", "D": "1d", "W": "1w" };
+  var iv = map[tf] || "1d";
+  var urls = [
+    "https://api.binance.com/api/v3/klines?symbol=" + symbol + "&interval=" + iv + "&limit=180",
+    "https://data-api.binance.vision/api/v3/klines?symbol=" + symbol + "&interval=" + iv + "&limit=180"
+  ];
+  var isIntra = ["1","5","15","30","60","240"].indexOf(tf) !== -1;
+  for(var i=0; i<urls.length; i++){
+    try {
+      var res = await fetch(urls[i], { cache: "no-store" });
+      var arr = await res.json();
+      if(Array.isArray(arr) && arr.length >= 20){
+        return arr.map(function(k){
+          var ts = Math.floor(k[0]/1000);
+          return { time: isIntra ? ts : new Date(ts*1000).toISOString().slice(0,10), open: +k[1], high: +k[2], low: +k[3], close: +k[4] };
+        });
+      }
+    } catch(e){}
+  }
+  return null;
+}
+
+// 2. Nguồn dữ liệu Chứng khoán Việt Nam đa khung thời gian (1m -> 1W)
 async function fetchVnCandles(sym, tf){
   var to = Math.floor(Date.now()/1000);
-  var days = tf === "1" ? 5 : ((tf === "15" || tf === "30") ? 25 : (tf === "60" ? 60 : (tf === "W" ? 900 : 220)));
-  var from = to - days * 86400;
+  var daysMap = { "1": 5, "5": 12, "15": 25, "30": 35, "60": 65, "240": 120, "D": 220, "W": 900 };
+  var from = to - (daysMap[tf] || 220) * 86400;
   var entradeRes = tf === "D" ? "1D" : (tf === "W" ? "1W" : tf);
   var urls = [
     "https://dchart-api.vndirect.com.vn/dchart/history?resolution=" + tf + "&symbol=" + sym + "&from=" + from + "&to=" + to,
     "https://services.entrade.com.vn/chart-api/v2/ohlcs/stock?from=" + from + "&to=" + to + "&symbol=" + sym + "&resolution=" + entradeRes
   ];
+  var isIntra = ["1","5","15","30","60","240"].indexOf(tf) !== -1;
   for(var i=0; i<urls.length; i++){
     try {
       var res = await fetch(urls[i], { cache: "no-store" });
       var j = await res.json();
       if(j && j.t && j.t.length >= 15){
-        var isIntra = (tf === "1" || tf === "15" || tf === "30" || tf === "60");
         var out = [], seen = {};
         for(var k=0; k<j.t.length; k++){
           var ts = Number(j.t[k]);
@@ -365,22 +389,30 @@ async function fetchVnCandles(sym, tf){
   return null;
 }
 
-async function fetchGlobalCandles(yahooSym, tf){
-  var intervalMap = { "1": "1m", "15": "15m", "30": "30m", "60": "60m", "D": "1d", "W": "1wk" };
-  var rangeMap = { "1": "1d", "15": "5d", "30": "1mo", "60": "1mo", "D": "1y", "W": "5y" };
+// 3. Nguồn dữ liệu Forex & Dầu thô USOIL đa khung thời gian (nhiều cổng dự phòng)
+async function fetchGlobalCandles(mkt, tf){
+  if(mkt.binance){
+    var spot = await fetchSpotCandles(mkt.binance, tf);
+    if(spot && spot.length >= 15) return spot;
+  }
+
+  var intervalMap = { "1": "1m", "5": "5m", "15": "15m", "30": "30m", "60": "60m", "240": "60m", "D": "1d", "W": "1wk" };
+  var rangeMap = { "1": "1d", "5": "5d", "15": "5d", "30": "1mo", "60": "1mo", "240": "3mo", "D": "1y", "W": "5y" };
   var iv = intervalMap[tf] || "1d", rg = rangeMap[tf] || "1y";
-  var target = "https://query1.finance.yahoo.com/v8/finance/chart/" + encodeURIComponent(yahooSym) + "?interval=" + iv + "&range=" + rg;
+  var target = "https://query1.finance.yahoo.com/v8/finance/chart/" + encodeURIComponent(mkt.yahoo) + "?interval=" + iv + "&range=" + rg;
   var proxies = [
+    "https://corsproxy.io/?" + encodeURIComponent(target),
     "https://api.allorigins.win/raw?url=" + encodeURIComponent(target),
-    "https://corsproxy.io/?" + encodeURIComponent(target)
+    "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(target)
   ];
+  var isIntra = ["1","5","15","30","60","240"].indexOf(tf) !== -1;
+
   for(var i=0; i<proxies.length; i++){
     try {
       var res = await fetch(proxies[i], { cache: "no-store" });
       var data = await res.json();
       var r = data.chart.result[0];
       var tsList = r.timestamp, q = r.indicators.quote[0];
-      var isIntra = (tf === "1" || tf === "15" || tf === "30" || tf === "60");
       var out = [], seen = {};
       for(var k=0; k<tsList.length; k++){
         if(q.open[k] == null || q.close[k] == null) continue;
@@ -394,10 +426,28 @@ async function fetchGlobalCandles(yahooSym, tf){
       if(out.length >= 15) return out;
     } catch(e){}
   }
+
+  // Dự phòng cho Forex (nếu tất cả proxy đều bận) qua Frankfurter API
+  if(mkt.type === "FOREX" && mkt.fxBase && mkt.fxQuote){
+    try {
+      var end = new Date().toISOString().slice(0,10);
+      var start = new Date(Date.now() - 180*86400000).toISOString().slice(0,10);
+      var fRes = await fetch("https://api.frankfurter.app/" + start + ".." + end + "?from=" + mkt.fxBase + "&to=" + mkt.fxQuote);
+      var fJson = await fRes.json();
+      var dates = Object.keys(fJson.rates || {}).sort();
+      var fxOut = [], prevC = null;
+      dates.forEach(function(d){
+        var c = fJson.rates[d][mkt.fxQuote];
+        var o = prevC || c;
+        fxOut.push({ time: d, open: o, high: Math.max(o,c)*1.0012, low: Math.min(o,c)*0.9988, close: c });
+        prevC = c;
+      });
+      if(fxOut.length >= 15) return fxOut;
+    } catch(e){}
+  }
   return null;
 }
 
-// ĐỘNG CƠ RA QUYẾT ĐỊNH TỰ ĐỘNG (AUTO-DECISION ENGINE)
 function computeAutoDecision(mkt, candles, isIntraday){
   var isFx = mkt.type !== "VN";
   var cl = candles.map(function(x){return x.close;}), hi = candles.map(function(x){return x.high;}), lo = candles.map(function(x){return x.low;});
@@ -414,13 +464,11 @@ function computeAutoDecision(mkt, candles, isIntraday){
   var range = (structHigh - structLow) || 0.0001;
   var fibo = (structHigh - curr) / range;
 
-  // 1. CHoCH
   var recentHigh = Math.max.apply(null, hi.slice(-8));
   var recentLow = Math.min.apply(null, lo.slice(-8));
   var bullChoch = (curr > prevStructHigh || recentHigh > prevStructHigh);
   var bearChoch = (curr < prevStructLow || recentLow < prevStructLow);
 
-  // 2. SCOB (Single Candle Order Block)
   var scobHigh = null, scobLow = null, scobFound = false;
   for(var i = candles.length - 2; i >= Math.max(5, candles.length - 25); i--){
     var c = candles[i], prevC = candles[i - 1], nextC = candles[i + 1];
@@ -442,13 +490,11 @@ function computeAutoDecision(mkt, candles, isIntraday){
     scobLow = +candles[minIdx].low.toFixed(dec);
   }
 
-  // 3. Vùng FLIP & Chuyển đổi Cung Cầu
   var flipMid = +((structHigh + structLow) / 2).toFixed(dec);
   var sdHigh = +(structLow + range * 0.35).toFixed(dec);
   var buyZoneHigh = +(structLow + range * 0.48).toFixed(dec);
   var sellZoneLow = +(structLow + range * 0.78).toFixed(dec);
 
-  // Chấm điểm xác suất tự động
   var prob = 50;
   if(bullChoch) prob += 16;
   if(bearChoch) prob -= 22;
@@ -459,13 +505,11 @@ function computeAutoDecision(mkt, candles, isIntraday){
   if(curr > ma20 && ma20 > ma50) prob += 8;
   prob = Math.max(18, Math.min(94, Math.round(prob)));
 
-  // CHỐT CỨNG 1 ĐIỂM VÀO (ENTRY) & 1 ĐIỂM CẮT LỖ (SL) DUY NHẤT
   var rawEntry = scobFound ? scobHigh : Math.max(scobHigh, sdHigh);
   if(rawEntry > curr) rawEntry = Math.min(curr, (curr + flipMid) / 2);
   if(rawEntry < structLow) rawEntry = +(structLow + range * 0.15).toFixed(dec);
 
   var entry = +rawEntry.toFixed(dec);
-  // Cắt lỗ khóa chặt dưới đáy thấp nhất giữa SCOB và Đáy bảo vệ cấu trúc (Protected Low)
   var slAnchor = Math.min(scobLow, structLow);
   var slBuf = isFx ? 0.9965 : 0.982;
   var sl = +(slAnchor * slBuf).toFixed(dec);
@@ -475,7 +519,6 @@ function computeAutoDecision(mkt, candles, isIntraday){
   var tp1 = +(Math.max(entry + rk * 2.0, sellZoneLow)).toFixed(dec);
   var tp2 = +(Math.max(entry + rk * 3.2, structHigh)).toFixed(dec);
 
-  // Chốt hành động cuối cùng
   var distToEntryPct = Math.abs(curr - entry) / curr * 100;
   var action = "", orderType = "", cardBorder = "", actionBadge = "", reason = "";
 
@@ -485,7 +528,7 @@ function computeAutoDecision(mkt, candles, isIntraday){
       orderType = "LỆNH THỊ TRƯỜNG (MARKET BUY)";
       cardBorder = "card p-6 border-2 border-emerald-500 shadow-xl";
       actionBadge = "bg-emerald-600 text-white border-emerald-400";
-      reason = "Giá hiện tại (" + curr.toFixed(dec) + ") đã nằm ngay sát điểm chốt Entry (" + entry + ") với hợp lưu " + prob + "%. Vào lệnh ngay và đặt SL cứng tại " + sl + ".";
+      reason = "Giá hiện tại (" + curr.toFixed(dec) + ") nằm ngay sát điểm chốt Entry (" + entry + ") với độ tin cậy " + prob + "%. Vào lệnh ngay và đặt SL cứng tại " + sl + ".";
     } else {
       action = "ĐẶT LỆNH CHỜ MUA (BUY LIMIT)";
       orderType = "LỆNH CHỜ BUY LIMIT TẠI " + entry;
@@ -524,67 +567,43 @@ function computeAutoDecision(mkt, candles, isIntraday){
 
 async function analyze(){
   stopLiveStream();
+  var myToken = ++reqToken; // Tăng token để hủy toàn bộ dữ liệu cũ của mã trước đó
+  curPlan = null;
+
   var raw = document.getElementById("sym-inp").value.trim().toUpperCase();
   if(!raw) return;
 
   var mkt = detectMarket(raw);
   var st = document.getElementById("status-box"), rb = document.getElementById("res-box");
+
+  // Ẩn ngay kết quả của mã cũ để tuyệt đối không bị "trên một mã, dưới một mã"
+  rb.classList.add("hidden");
   st.classList.remove("hidden");
-  st.innerHTML = "⏳ Hệ thống đang tự động hợp lưu 10 yếu tố và chốt điểm vào / cắt lỗ cho <b>" + mkt.display + "</b>...";
+  st.innerHTML = "⏳ Đang tải dữ liệu khung <b>" + tfDisplayName(curTF) + "</b> & chốt điểm vào cho <b>" + mkt.display + "</b>...";
 
   var candles = mkt.type === "VN"
     ? await fetchVnCandles(mkt.vnSym, curTF)
-    : await fetchGlobalCandles(mkt.yahoo, curTF);
+    : await fetchGlobalCandles(mkt, curTF);
 
-  if(!candles || candles.length < 20){
-    st.innerHTML = "⚠️ Không lấy được dữ liệu khung <b>" + curTF + "</b> của <b>" + mkt.display + "</b> (vui lòng thử khung <b>1D</b> hoặc kiểm tra lại mã).";
+  // Nếu người dùng vừa bấm sang mã khác trong lúc đang tải thì bỏ qua kết quả cũ này
+  if(myToken !== reqToken) return;
+
+  if(!candles || candles.length < 15){
+    st.innerHTML = "⚠️ Không lấy được dữ liệu khung <b>" + tfDisplayName(curTF) + "</b> của <b>" + mkt.display + "</b> (vui lòng thử khung <b>1D</b> hoặc kiểm tra lại mã).";
     return;
   }
 
-  var isIntraday = (curTF === "1" || curTF === "15" || curTF === "30" || curTF === "60");
+  var isIntraday = ["1","5","15","30","60","240"].indexOf(curTF) !== -1;
   curPlan = computeAutoDecision(mkt, candles, isIntraday);
 
-  st.classList.add("hidden"); rb.classList.remove("hidden");
+  st.classList.add("hidden");
+  rb.classList.remove("hidden");
+  document.getElementById("r-tf-label").innerText = tfDisplayName(curTF);
+  document.getElementById("chart-sym-title").innerText = mkt.display + " (" + tfDisplayName(curTF) + ")";
   document.getElementById("live-tick-info").innerText = "● Chốt lúc " + new Date().toLocaleTimeString("vi-VN");
   showPlan(curPlan);
   drawChart(curPlan);
   startLiveStream();
-}
-
-// Quét tự động toàn danh mục để tìm kèo có xác suất cao nhất
-async function scanAllMarkets(){
-  var scanBox = document.getElementById("scanner-box");
-  var tbody = document.getElementById("scanner-tbody");
-  scanBox.classList.remove("hidden");
-  tbody.innerHTML = '<tr><td colspan="8" class="py-5 text-center text-sky-400">⏳ Đang tự động quét 10 mã chủ lực (BTC, USOIL, XAU/USD, EUR/USD, MBB, TCB, VCB, HPG, FPT, SSI)...</td></tr>';
-
-  var watchlist = ["BTC/USD", "USOIL", "XAU/USD", "EUR/USD", "MBB", "TCB", "VCB", "HPG", "FPT", "SSI"];
-  var results = [];
-
-  for(var i = 0; i < watchlist.length; i++){
-    var sym = watchlist[i];
-    var mkt = detectMarket(sym);
-    var candles = mkt.type === "VN" ? await fetchVnCandles(mkt.vnSym, "D") : await fetchGlobalCandles(mkt.yahoo, "D");
-    if(candles && candles.length >= 20){
-      results.push(computeAutoDecision(mkt, candles, false));
-    }
-  }
-
-  results.sort(function(a, b){ return b.prob - a.prob; });
-  tbody.innerHTML = "";
-  results.forEach(function(r){
-    var badgeCls = r.prob >= 66 ? "text-emerald-400" : (r.prob >= 48 ? "text-amber-400" : "text-rose-400");
-    tbody.innerHTML += '<tr class="hover:bg-slate-800/50">' +
-      '<td class="py-2.5 px-2 font-bold text-white">' + r.sym + '</td>' +
-      '<td class="py-2.5 px-2 font-mono text-sky-300">' + r.curr + '</td>' +
-      '<td class="py-2.5 px-2 font-bold ' + badgeCls + '">' + r.action + '</td>' +
-      '<td class="py-2.5 px-2 font-mono font-bold text-white">' + r.entry + '</td>' +
-      '<td class="py-2.5 px-2 font-mono font-bold text-rose-400">' + r.sl + '</td>' +
-      '<td class="py-2.5 px-2 font-mono text-emerald-400">' + r.tp1 + '</td>' +
-      '<td class="py-2.5 px-2 font-bold ' + badgeCls + '">' + r.prob + '%</td>' +
-      '<td class="py-2.5 px-2"><button onclick="pick(\'' + r.sym.split(" ")[0] + '\')" class="px-2.5 py-1 rounded bg-blue-600 hover:bg-blue-500 text-white font-bold cursor-pointer">Xem Chi Tiết</button></td>' +
-    '</tr>';
-  });
 }
 
 function showPlan(p){
@@ -683,11 +702,13 @@ function drawChart(p){
 
 async function tickRealtimeUpdate(){
   if(!curPlan || !activeSeries) return;
+  var snapToken = reqToken;
+  var snapSym = curPlan.sym;
   var candles = curPlan.mkt.type === "VN"
     ? await fetchVnCandles(curPlan.mkt.vnSym, curTF)
-    : await fetchGlobalCandles(curPlan.mkt.yahoo, curTF);
+    : await fetchGlobalCandles(curPlan.mkt, curTF);
 
-  if(!candles || !candles.length) return;
+  if(snapToken !== reqToken || !curPlan || curPlan.sym !== snapSym || !candles || !candles.length) return;
   var lastBar = candles[candles.length - 1];
   try { activeSeries.update(lastBar); } catch(e){}
 
@@ -716,7 +737,7 @@ function saveSignalToLog(){
   if(!curPlan) return;
   var logs = JSON.parse(localStorage.getItem("alphadesk_pnl_logs") || "[]");
   logs.unshift({
-    time: new Date().toLocaleString("vi-VN") + " [" + curTF + "]",
+    time: new Date().toLocaleString("vi-VN") + " [" + tfDisplayName(curTF) + "]",
     sym: curPlan.sym, isFx: curPlan.isFx, mult: curPlan.mult, volText: curPlan.volText,
     entry: curPlan.entry, sl: curPlan.sl, tp1: curPlan.tp1, curr: curPlan.curr
   });
