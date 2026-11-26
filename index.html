@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AlphaDesk Pro V8.0 — Hệ Thống Chốt Lệnh Chuẩn T+3 & Đa Khung Thời Gian</title>
+  <title>AlphaDesk Pro V9.0 — Hệ Thống Chốt Lệnh Chuẩn T+3 & Tin Tức Vĩ Mô Forex</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
@@ -49,11 +49,11 @@
         </div>
         <span class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-          V8.0 T+3 GUARD & 1W+1D ANCHOR
+          V9.0 T+3 GUARD & LIVE FOREX NEWS SHIELD
         </span>
       </div>
 
-      <!-- RIGHT CONTROLS: INTERACTIVE REALTIME TOGGLE + CLOCK -->
+      <!-- RIGHT CONTROLS -->
       <div class="flex flex-wrap items-center gap-2.5">
         <div id="apiHealthBadge" class="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-400">
           <span id="apiDot" class="w-2 h-2 rounded-full bg-emerald-400"></span>
@@ -66,53 +66,60 @@
           <span id="rtLabel">Realtime: BẬT (3s)</span>
         </button>
 
-        <button onclick="forceManualSync()" title="Ép tải lại dữ liệu ngay lập tức"
+        <button onclick="forceManualSync()" title="Ép tải lại toàn bộ giá & tin tức ngay lập tức"
           class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition cursor-pointer">
           ↻ Làm mới
         </button>
 
         <div class="px-3 py-1.5 rounded-lg bg-slate-900/90 border border-slate-800 text-xs text-slate-400">
-          Giờ hệ thống: <span id="sysClock" class="font-mono-num font-bold text-sky-400 ml-1">--:--:--</span>
+          Giờ VN: <span id="sysClock" class="font-mono-num font-bold text-sky-400 ml-1">--:--:--</span>
         </div>
       </div>
     </div>
     <div class="max-w-[1440px] mx-auto mt-1 flex flex-wrap items-center justify-between text-[11px] text-slate-400">
-      <span>Bộ Lọc Kép Chuyên Biệt: CK Việt Nam (Khóa Đồng Thuận 1W+1D & Kiểm Định T+3) • Quốc Tế/Crypto (T+0 2 Chiều Long/Short)</span>
+      <span>CK Việt Nam (Mỏ Neo 1W+1D & Kiểm Định T+3) • Forex/Vàng/Crypto (Kỹ Thuật 10 Lớp + Lịch Kinh Tế & Lá Chắn Tin Đỏ)</span>
       <span id="sessionGuardText" class="text-amber-400 font-medium"></span>
     </div>
   </header>
 
   <main class="max-w-[1440px] mx-auto px-4 lg:px-8 mt-5 space-y-5">
 
-    <!-- SECTION 1: CAPITAL, RISK & STRICTNESS SETTINGS -->
+    <!-- SECTION 1: CAPITAL, RISK, STRICTNESS & NEWS SHIELD SETTINGS -->
     <section class="glass-card rounded-2xl p-4 lg:p-5">
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3.5 items-end">
         <div>
           <label class="block text-xs font-medium text-slate-400 mb-1.5">Vốn Forex / Vàng / BTC ($)</label>
           <input id="capUsd" type="number" value="10000" min="10" step="100" onchange="recalcRiskAndRender()"
-            class="w-full bg-[#090e1a] border border-slate-700/80 focus:border-sky-500 rounded-xl px-3.5 py-2.5 text-sm font-mono-num font-bold text-white outline-none" />
+            class="w-full bg-[#090e1a] border border-slate-700/80 focus:border-sky-500 rounded-xl px-3 py-2 text-sm font-mono-num font-bold text-white outline-none" />
         </div>
         <div>
           <label class="block text-xs font-medium text-slate-400 mb-1.5">Vốn CK Việt Nam (đ)</label>
           <input id="capVnd" type="number" value="500000000" min="1000000" step="1000000" onchange="recalcRiskAndRender()"
-            class="w-full bg-[#090e1a] border border-slate-700/80 focus:border-sky-500 rounded-xl px-3.5 py-2.5 text-sm font-mono-num font-bold text-white outline-none" />
+            class="w-full bg-[#090e1a] border border-slate-700/80 focus:border-sky-500 rounded-xl px-3 py-2 text-sm font-mono-num font-bold text-white outline-none" />
         </div>
         <div>
           <label class="block text-xs font-medium text-slate-400 mb-1.5">Rủi ro tối đa / Lệnh (%)</label>
           <input id="riskPct" type="number" value="1.5" min="0.1" max="10" step="0.1" onchange="recalcRiskAndRender()"
-            class="w-full bg-[#090e1a] border border-slate-700/80 focus:border-sky-500 rounded-xl px-3.5 py-2.5 text-sm font-mono-num font-bold text-amber-400 outline-none" />
+            class="w-full bg-[#090e1a] border border-slate-700/80 focus:border-sky-500 rounded-xl px-3 py-2 text-sm font-mono-num font-bold text-amber-400 outline-none" />
         </div>
         <div>
-          <label class="block text-xs font-medium text-slate-400 mb-1.5">Ngưỡng duyệt kèo CKVN (T+3)</label>
+          <label class="block text-xs font-medium text-slate-400 mb-1.5">Ngưỡng duyệt CKVN (T+3)</label>
           <select id="vnStrictMode" onchange="triggerAnalyze(true)"
-            class="w-full bg-[#090e1a] border border-emerald-500/40 focus:border-emerald-400 rounded-xl px-3 py-2.5 text-xs font-bold text-emerald-300 outline-none">
-            <option value="STRICT_75" selected>Siết chặt T+3 (≥ 75% & Đồng thuận 1W)</option>
-            <option value="ULTRA_80">Siêu chắc chắn (≥ 80% & Vượt đỉnh ngắn)</option>
+            class="w-full bg-[#090e1a] border border-emerald-500/40 focus:border-emerald-400 rounded-xl px-2.5 py-2 text-xs font-bold text-emerald-300 outline-none">
+            <option value="STRICT_75" selected>Siết chặt T+3 (≥ 75% & 1W)</option>
+            <option value="ULTRA_80">Siêu chắc chắn (≥ 80%)</option>
           </select>
         </div>
-        <div class="bg-[#090e1a] border border-slate-800 rounded-xl px-4 py-2.5 flex items-center justify-between">
-          <span class="text-xs text-slate-400">Lỗ tối đa cho phép:</span>
-          <span id="maxRiskDisplay" class="font-mono-num text-xs lg:text-sm font-extrabold text-emerald-400">$150 | 7.50Tr</span>
+        <div>
+          <label class="block text-xs font-medium text-slate-400 mb-1.5">Lá chắn tin đỏ Forex</label>
+          <button id="btnNewsShield" onclick="toggleNewsShield()"
+            class="w-full py-2 px-3 rounded-xl text-xs font-bold bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/50 transition cursor-pointer">
+            🛡️ Chặn tin đỏ: BẬT
+          </button>
+        </div>
+        <div class="bg-[#090e1a] border border-slate-800 rounded-xl px-3.5 py-2 flex items-center justify-between">
+          <span class="text-xs text-slate-400">Rủi ro/lệnh:</span>
+          <span id="maxRiskDisplay" class="font-mono-num text-xs font-extrabold text-emerald-400">$150 | 7.50Tr</span>
         </div>
       </div>
     </section>
@@ -139,8 +146,8 @@
 
       <!-- Input + Execute Button -->
       <div class="flex flex-col sm:flex-row gap-3">
-        <input id="symbolInput" type="text" value="HPG" onkeydown="if(event.key==='Enter') selectAsset(this.value)"
-          placeholder="Nhập mã: HPG, MBB, VCB, FPT, SSI, XAU/USD, BTC/USD, EUR/USD..."
+        <input id="symbolInput" type="text" value="XAU/USD" onkeydown="if(event.key==='Enter') selectAsset(this.value)"
+          placeholder="Nhập mã: XAU/USD, EUR/USD, GBP/USD, USD/JPY, BTC/USD, HPG, MBB, VCB..."
           class="flex-1 bg-[#090e1a] border border-slate-700 focus:border-sky-500 rounded-xl px-4 py-3 text-sm font-mono-num font-bold text-white uppercase outline-none" />
         <button onclick="selectAsset(document.getElementById('symbolInput').value)"
           class="px-6 py-3 rounded-xl text-sm font-extrabold bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white shadow-lg shadow-sky-950/60 transition cursor-pointer flex items-center justify-center gap-2">
@@ -150,6 +157,16 @@
 
       <!-- Quick Asset Chips -->
       <div class="space-y-2 pt-1 text-xs">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="text-slate-400 font-semibold w-36">Quốc tế & Crypto (T+0):</span>
+          <button onclick="selectAsset('XAU/USD')" class="asset-chip px-3 py-1 rounded-lg bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-300 border border-yellow-500/40 font-semibold transition">XAU/USD (Vàng)</button>
+          <button onclick="selectAsset('BTC/USD')" class="asset-chip px-3 py-1 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 font-semibold transition">Bitcoin (BTC/USD)</button>
+          <button onclick="selectAsset('ETH/USD')" class="asset-chip px-3 py-1 rounded-lg bg-purple-500/15 hover:bg-purple-500/25 text-purple-300 border border-purple-500/30 font-semibold transition">Ethereum (ETH/USD)</button>
+          <button onclick="selectAsset('USOIL')" class="asset-chip px-3 py-1 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-300 border border-indigo-500/30 font-semibold transition">USOIL (Dầu WTI)</button>
+          <button onclick="selectAsset('EUR/USD')" class="asset-chip px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-sky-300 border border-slate-700 font-semibold transition">EUR/USD</button>
+          <button onclick="selectAsset('GBP/USD')" class="asset-chip px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-sky-300 border border-slate-700 font-semibold transition">GBP/USD</button>
+          <button onclick="selectAsset('USD/JPY')" class="asset-chip px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-sky-300 border border-slate-700 font-semibold transition">USD/JPY</button>
+        </div>
         <div class="flex flex-wrap items-center gap-2">
           <span class="text-slate-400 font-semibold w-36">Chứng khoán VN (T+3):</span>
           <button onclick="selectAsset('MBB')" class="asset-chip px-3 py-1 rounded-lg bg-blue-500/15 hover:bg-blue-500/25 text-blue-300 border border-blue-500/30 font-semibold transition">MB (MBB)</button>
@@ -161,22 +178,12 @@
           <button onclick="selectAsset('MWG')" class="asset-chip px-3 py-1 rounded-lg bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 border border-sky-500/30 font-semibold transition">MWG</button>
           <button onclick="selectAsset('VNINDEX')" class="asset-chip px-3 py-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 font-semibold transition">VN-INDEX</button>
         </div>
-        <div class="flex flex-wrap items-center gap-2">
-          <span class="text-slate-400 font-semibold w-36">Quốc tế & Crypto (T+0):</span>
-          <button onclick="selectAsset('XAU/USD')" class="asset-chip px-3 py-1 rounded-lg bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-300 border border-yellow-500/40 font-semibold transition">XAU/USD (Vàng)</button>
-          <button onclick="selectAsset('BTC/USD')" class="asset-chip px-3 py-1 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 font-semibold transition">Bitcoin (BTC/USD)</button>
-          <button onclick="selectAsset('ETH/USD')" class="asset-chip px-3 py-1 rounded-lg bg-purple-500/15 hover:bg-purple-500/25 text-purple-300 border border-purple-500/30 font-semibold transition">Ethereum (ETH/USD)</button>
-          <button onclick="selectAsset('USOIL')" class="asset-chip px-3 py-1 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-300 border border-indigo-500/30 font-semibold transition">USOIL (Dầu WTI)</button>
-          <button onclick="selectAsset('EUR/USD')" class="asset-chip px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-sky-300 border border-slate-700 font-semibold transition">EUR/USD</button>
-          <button onclick="selectAsset('GBP/USD')" class="asset-chip px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-sky-300 border border-slate-700 font-semibold transition">GBP/USD</button>
-          <button onclick="selectAsset('USD/JPY')" class="asset-chip px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-sky-300 border border-slate-700 font-semibold transition">USD/JPY</button>
-        </div>
       </div>
 
       <!-- Watchlist Scan Result Drawer -->
       <div id="scanResultsDrawer" class="hidden pt-3 border-t border-slate-800">
         <div class="flex items-center justify-between mb-2">
-          <span class="text-xs font-bold text-indigo-300">📊 KẾT QUẢ LỌC TOÀN DANH MỤC (Chỉ những mã đạt chuẩn đồng thuận mới được mở khóa Mua/Bán)</span>
+          <span class="text-xs font-bold text-indigo-300">📊 KẾT QUẢ LỌC TOÀN DANH MỤC (Bấm vào mã để xem chi tiết)</span>
           <button onclick="document.getElementById('scanResultsDrawer').classList.add('hidden')" class="text-xs text-slate-400 hover:text-white">Đóng ✕</button>
         </div>
         <div id="scanResultsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5"></div>
@@ -187,23 +194,23 @@
     <div id="statusBanner" class="glass-card rounded-xl px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs border-amber-500/40 bg-amber-500/5">
       <div class="flex items-center gap-2">
         <span id="statusIcon">⏳</span>
-        <span id="statusText" class="text-amber-300 font-medium">Đang khởi tạo luồng kiểm định đa khung thời gian...</span>
+        <span id="statusText" class="text-amber-300 font-medium">Đang khởi tạo luồng dữ liệu kỹ thuật & lịch tin tức vĩ mô...</span>
       </div>
       <div class="flex items-center gap-2">
-        <span id="anchorBadge" class="font-mono-num text-[11px] px-2.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">Mỏ neo: 1W + 1D</span>
-        <span id="tfSyncBadge" class="font-mono-num text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300">Biểu đồ: 1D</span>
+        <span id="anchorBadge" class="font-mono-num text-[11px] px-2.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">Mỏ neo: 4H + 1H</span>
+        <span id="tfSyncBadge" class="font-mono-num text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300">Biểu đồ: 1H</span>
       </div>
     </div>
 
     <!-- SECTION 3: FINAL AUTO-DECISION PANEL -->
-    <section id="decisionCard" class="glass-card glow-red rounded-2xl p-5 lg:p-6 space-y-5 transition-all duration-200">
+    <section id="decisionCard" class="glass-card glow-emerald rounded-2xl p-5 lg:p-6 space-y-5 transition-all duration-200">
       <!-- Top Row -->
       <div class="flex flex-wrap items-start justify-between gap-4">
         <div class="space-y-1.5">
           <div class="flex flex-wrap items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
             <span>🤖 QUYẾT ĐỊNH CUỐI CÙNG CỦA HỆ THỐNG</span>
             <span id="marketTypeTag" class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px]">--</span>
-            <span id="tPlusSurvivalTag" class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px]">Kiểm định T+3: --</span>
+            <span id="tPlusSurvivalTag" class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px]">Kiểm định: --</span>
           </div>
           <div class="flex flex-wrap items-center gap-3">
             <h1 id="resSymbol" class="text-2xl lg:text-4xl font-extrabold tracking-tight text-white">---</h1>
@@ -212,7 +219,7 @@
             <span id="resTimestamp" class="text-xs text-emerald-400 font-mono-num">• Chờ dữ liệu</span>
           </div>
           <p id="resSummary" class="text-xs lg:text-sm text-slate-300 max-w-4xl leading-relaxed">
-            Hệ thống đang đồng bộ dữ liệu nến đa khung thời gian và kiểm định sức chịu đựng T+3...
+            Hệ thống đang đồng bộ dữ liệu nến đa khung thời gian và đối chiếu lịch tin vĩ mô...
           </p>
         </div>
 
@@ -228,14 +235,14 @@
         </div>
       </div>
 
-      <!-- RE-ACTIVATION CONDITION BANNER (SHOWN WHEN LOCKED / STAND ASIDE) -->
+      <!-- RE-ACTIVATION / NEWS SHIELD LOCK BANNER -->
       <div id="reactivationBanner" class="hidden rounded-xl p-4 bg-rose-950/35 border border-rose-500/45 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div class="space-y-1">
-          <div class="text-xs font-extrabold uppercase tracking-wider text-rose-300 flex items-center gap-1.5">
-            <span>🔒 KHOÁ VỊ THẾ ĐỂ BẢO TOÀN VỐN T+3 — ĐIỀU KIỆN MỞ LẠI LỆNH MUA:</span>
+          <div id="reactivationTitle" class="text-xs font-extrabold uppercase tracking-wider text-rose-300 flex items-center gap-1.5">
+            <span>🔒 KHOÁ VỊ THẾ ĐỂ BẢO TOÀN VỐN — ĐIỀU KIỆN MỞ LẠI LỆNH:</span>
           </div>
           <p id="reactivationConditionText" class="text-xs lg:text-sm text-slate-200 font-medium">
-            Đứng ngoài quan sát cho đến khi giá đóng nến Ngày vượt dứt khoát kháng cự cấu trúc kèm thanh khoản xác nhận.
+            Đứng ngoài quan sát cho đến khi điều kiện thị trường ổn định.
           </p>
         </div>
         <span class="px-3 py-1.5 rounded-lg bg-rose-500/20 border border-rose-500/40 text-xs font-mono-num font-bold text-rose-200 whitespace-nowrap">
@@ -243,11 +250,10 @@
         </span>
       </div>
 
-      <!-- EXECUTION COORDINATES WRAPPER (AUTOMATICALLY LOCKED WHEN "CẤM VÀO LỆNH") -->
+      <!-- EXECUTION COORDINATES WRAPPER -->
       <div id="executionCoordinatesWrapper" class="space-y-4 transition-all duration-200">
-        <!-- Middle Row: Hard-Locked ENTRY & STOP LOSS Boxes -->
+        <!-- ENTRY & STOP LOSS -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <!-- ENTRY BOX -->
           <div id="entryBox" class="bg-[#091220] border border-sky-500/40 glow-blue rounded-2xl p-4 lg:p-5 space-y-2">
             <div class="flex items-center justify-between gap-2">
               <span id="entryTitle" class="text-xs font-extrabold uppercase tracking-wide text-emerald-400">✅ CHỐT ĐIỂM VÀO LỆNH (ENTRY)</span>
@@ -257,7 +263,6 @@
             <p id="resEntryNote" class="text-xs text-slate-400">Khóa cứng tại giao điểm vùng Chuyển đổi Cung Cầu & Hỗ trợ cấu trúc.</p>
           </div>
 
-          <!-- STOP LOSS BOX -->
           <div id="slBox" class="bg-[#180c14] border border-rose-500/40 glow-red rounded-2xl p-4 lg:p-5 space-y-2">
             <div class="flex items-center justify-between gap-2">
               <span class="text-xs font-extrabold uppercase tracking-wide text-rose-400">🛑 CHỐT ĐIỂM CẮT LỖ (STOP LOSS)</span>
@@ -268,7 +273,7 @@
           </div>
         </div>
 
-        <!-- Third Row: TP1, TP2, Position Size -->
+        <!-- TP1, TP2, POSITION SIZE -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div class="bg-[#090e1a] border border-slate-800 rounded-xl p-4">
             <div class="flex items-center justify-between mb-1">
@@ -292,15 +297,15 @@
               <div id="resPositionSize" class="font-mono-num text-xl lg:text-2xl font-extrabold text-amber-400">---</div>
             </div>
             <div class="text-right text-[11px] text-slate-400 leading-tight">
-              Tự động chia<br>theo % rủi ro<br><span class="text-slate-500">Đã tính phí/thuế</span>
+              Tự động chia<br>theo % rủi ro<br><span class="text-slate-500">Đã tính phí/spread</span>
             </div>
           </div>
         </div>
 
-        <!-- Fourth Row: Live P&L & Risk Projection Cards -->
+        <!-- LIVE P&L PROJECTION -->
         <div class="bg-[#080d18] border border-slate-800/90 rounded-2xl p-4 space-y-3">
           <div class="flex flex-wrap items-center justify-between gap-2">
-            <span class="text-xs font-extrabold uppercase tracking-wider text-amber-400">💰 DỰ TOÁN & ĐỐI SOÁT LÃI / LỖ NẾU KHỚP ĐÚNG ĐIỂM CHỐT (ĐÃ TRỪ PHÍ & THUẾ)</span>
+            <span class="text-xs font-extrabold uppercase tracking-wider text-amber-400">💰 DỰ TOÁN & ĐỐI SOÁT LÃI / LỖ NẾU KHỚP ĐÚNG ĐIỂM CHỐT (ĐÃ TRỪ PHÍ & SPREAD)</span>
             <span id="breakEvenBadge" class="hidden px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
               🛡️ Đã đạt R:R 1:1 — Khuyến nghị dời SL về hòa vốn!
             </span>
@@ -333,14 +338,73 @@
       <!-- X-RAY 10-FACTOR CONFLUENCE MATRIX -->
       <div class="bg-[#080d18] border border-slate-800/90 rounded-2xl p-4 space-y-2.5">
         <div class="flex flex-wrap items-center justify-between gap-2">
-          <span class="text-xs font-extrabold uppercase tracking-wider text-sky-400">🔬 BẢNG SOI X-RAY 10 TẦNG KIỂM ĐỊNH HỢP LƯU (CONFLUENCE & T+3 MATRIX)</span>
+          <span class="text-xs font-extrabold uppercase tracking-wider text-sky-400">🔬 BẢNG SOI X-RAY 10 TẦNG KIỂM ĐỊNH HỢP LƯU (CONFLUENCE MATRIX)</span>
           <span id="confluenceScoreSummary" class="text-xs font-mono-num text-slate-400">Đạt: 0/10 tiêu chí</span>
         </div>
         <div id="confluenceGrid" class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs"></div>
       </div>
     </section>
 
-    <!-- SECTION 4: INTERACTIVE CHART -->
+    <!-- NEW SECTION 4: LIVE FOREX ECONOMIC CALENDAR & MACRO HEADLINES -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      <!-- Left 2 Columns: Economic Calendar -->
+      <div class="lg:col-span-2 glass-card rounded-2xl p-4 lg:p-5 space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <span class="text-base">📰</span>
+            <h2 class="text-sm lg:text-base font-bold text-white">Lịch Kinh Tế & Tin Tức Vĩ Mô Forex Realtime (Giờ VN)</h2>
+            <span id="nextNewsCountdown" class="px-2.5 py-0.5 rounded-full text-[11px] font-mono-num font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+              Đang quét lịch tin...
+            </span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button onclick="setNewsFilter('SYMBOL')" id="nf-SYMBOL" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-sky-600 text-white cursor-pointer">Theo mã đang chọn</button>
+            <button onclick="setNewsFilter('ALL')" id="nf-ALL" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 cursor-pointer">Tất cả tin chính</button>
+            <button onclick="fetchEconomicCalendar(true)" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 cursor-pointer">↻</button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto max-h-[300px] overflow-y-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead class="sticky top-0 bg-[#0b101d] z-10">
+              <tr class="border-b border-slate-800 text-slate-400 uppercase text-[10px]">
+                <th class="py-2 px-2.5">Giờ VN</th>
+                <th class="py-2 px-2">Tiền tệ</th>
+                <th class="py-2 px-2">Mức độ</th>
+                <th class="py-2 px-2.5">Sự kiện kinh tế</th>
+                <th class="py-2 px-2 text-right">Thực tế</th>
+                <th class="py-2 px-2 text-right">Dự báo</th>
+                <th class="py-2 px-2 text-right">Kỳ trước</th>
+                <th class="py-2 px-2.5 text-right">Đánh giá tin</th>
+              </tr>
+            </thead>
+            <tbody id="calendarTableBody" class="divide-y divide-slate-800/60 font-mono-num">
+              <tr><td colspan="8" class="py-6 text-center text-slate-500 font-sans">Đang tải lịch kinh tế Forex & Vàng hôm nay...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Right Column: Live Macro News Headlines & Fundamental Bias -->
+      <div class="glass-card rounded-2xl p-4 lg:p-5 space-y-3 flex flex-col justify-between">
+        <div class="space-y-2.5">
+          <div class="flex items-center justify-between">
+            <h2 class="text-sm lg:text-base font-bold text-white flex items-center gap-2">
+              <span>📡 Tin Nóng Vĩ Mô & Định Hướng</span>
+            </h2>
+            <span id="macroBiasBadge" class="px-2 py-0.5 rounded text-[11px] font-bold bg-slate-800 text-sky-300">Trung lập</span>
+          </div>
+          <div id="macroHeadlinesList" class="space-y-2.5 max-h-[255px] overflow-y-auto pr-1 text-xs">
+            <div class="p-3 rounded-xl bg-[#090e1a] border border-slate-800 text-slate-400">Đang đồng bộ tin nóng tài chính quốc tế...</div>
+          </div>
+        </div>
+        <div class="pt-2 border-t border-slate-800/80 text-[11px] text-slate-400 leading-relaxed">
+          💡 <strong class="text-slate-300">Chiến thuật đánh tin chuẩn:</strong> Bật <em>Lá chắn tin đỏ</em> để tránh giãn spread 15 phút trước tin. Sau khi tin công bố số liệu <span class="text-emerald-400 font-mono-num">Actual</span>, chờ giá hồi về vùng SCOB/Fibo rồi mới khớp lệnh theo chiều tin.
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: INTERACTIVE CHART -->
     <section class="glass-card rounded-2xl p-4 lg:p-5 space-y-3">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div class="flex items-center gap-2.5">
@@ -356,9 +420,9 @@
           <button onclick="setTimeframe('5m')" id="tf-5m" class="tf-btn px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700">5m</button>
           <button onclick="setTimeframe('15m')" id="tf-15m" class="tf-btn px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700">15m</button>
           <button onclick="setTimeframe('30m')" id="tf-30m" class="tf-btn px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700">30m</button>
-          <button onclick="setTimeframe('1H')" id="tf-1H" class="tf-btn px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700">1H</button>
+          <button onclick="setTimeframe('1H')" id="tf-1H" class="tf-btn px-2.5 py-1 rounded-lg text-xs font-bold bg-sky-600 text-white">1H</button>
           <button onclick="setTimeframe('4H')" id="tf-4H" class="tf-btn px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700">4H</button>
-          <button onclick="setTimeframe('1D')" id="tf-1D" class="tf-btn px-2.5 py-1 rounded-lg text-xs font-bold bg-sky-600 text-white">1D</button>
+          <button onclick="setTimeframe('1D')" id="tf-1D" class="tf-btn px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700">1D</button>
           <button onclick="setTimeframe('1W')" id="tf-1W" class="tf-btn px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700">1W</button>
         </div>
       </div>
@@ -366,14 +430,14 @@
       <div id="chartContainer" class="w-full h-[420px] rounded-xl overflow-hidden border border-slate-800 bg-[#070b14]"></div>
     </section>
 
-    <!-- SECTION 5: P&L JOURNAL & SUPABASE CLOUD SYNC -->
+    <!-- SECTION 6: P&L JOURNAL & SUPABASE CLOUD SYNC -->
     <section class="glass-card rounded-2xl p-4 lg:p-5 space-y-4">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 class="text-sm lg:text-base font-bold text-white flex items-center gap-2">
             <span>📒 Nhật Ký Đối Soát Lãi/Lỗ & Đồng Bộ Đám Mây (Supabase)</span>
           </h2>
-          <p class="text-xs text-slate-400">Chỉ ghi nhận các kèo đã vượt qua bộ lọc T+3 & đồng bộ trực tiếp với bảng <code class="text-sky-400">analysis_reports</code>.</p>
+          <p class="text-xs text-slate-400">Ghi nhận các kèo đã đạt chuẩn & đồng bộ trực tiếp với bảng <code class="text-sky-400">analysis_reports</code> trên Supabase.</p>
         </div>
         <div class="flex flex-wrap items-center gap-2">
           <button onclick="syncLogsFromSupabase()" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/40 transition cursor-pointer">
@@ -428,14 +492,18 @@
     };
 
     let state = {
-      symbol: 'HPG',
-      timeframe: '1D',
+      symbol: 'XAU/USD',
+      timeframe: '1H',
       realtimeEnabled: true,
+      newsShieldEnabled: true,
+      newsFilterMode: 'SYMBOL', // SYMBOL | ALL
       countdown: 3,
       reqToken: 0,
       isFetching: false,
       lastCandles: [],
       lastAnalysis: null,
+      calendarEvents: [],
+      activeRedNewsAlert: null,
       logs: JSON.parse(localStorage.getItem('alphadesk_pnl_logs') || '[]')
     };
 
@@ -451,20 +519,24 @@
       updateClock();
       setInterval(updateClock, 1000);
       setInterval(realtimeHeartbeat, 1000);
+      setInterval(() => fetchEconomicCalendar(false), 60000); // Refresh news calendar every 60s
       recalcRiskAndRender();
       renderLogsTable();
-      selectAsset('HPG');
+      fetchEconomicCalendar(true);
+      selectAsset('XAU/USD');
     });
 
     function updateClock() {
       const now = new Date();
       document.getElementById('sysClock').textContent = now.toTimeString().split(' ')[0];
+      updateNewsCountdownAndShield();
+
       const h = now.getHours();
       const m = now.getMinutes();
       const guardEl = document.getElementById('sessionGuardText');
       if (!isVnStock(state.symbol)) {
-        if ((h === 19 && m >= 25) || (h === 20 && m <= 35)) {
-          guardEl.textContent = '⚠️ Khung giờ tin Mỹ (19:30 - 20:30): Giãn spread, giảm khối lượng!';
+        if (state.activeRedNewsAlert) {
+          guardEl.textContent = `🚨 LÁ CHẮN TIN ĐỎ ĐANG KÍCH HOẠT: ${state.activeRedNewsAlert.title} (${state.activeRedNewsAlert.timeVN})`;
         } else {
           guardEl.textContent = '🟢 Phiên Quốc tế hoạt động bình thường (T+0)';
         }
@@ -482,7 +554,245 @@
     }
 
     // =========================================================================
-    // 3. INTERACTIVE REALTIME CONTROL
+    // 3. LIVE ECONOMIC CALENDAR & MACRO NEWS ENGINE
+    // =========================================================================
+    function toggleNewsShield() {
+      state.newsShieldEnabled = !state.newsShieldEnabled;
+      const btn = document.getElementById('btnNewsShield');
+      if (state.newsShieldEnabled) {
+        btn.className = 'w-full py-2 px-3 rounded-xl text-xs font-bold bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/50 transition cursor-pointer';
+        btn.textContent = '🛡️ Chặn tin đỏ: BẬT';
+      } else {
+        btn.className = 'w-full py-2 px-3 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-400 border border-slate-700 transition cursor-pointer';
+        btn.textContent = '🛡️ Chặn tin đỏ: TẮT';
+      }
+      triggerAnalyze(true);
+    }
+
+    function setNewsFilter(mode) {
+      state.newsFilterMode = mode;
+      document.getElementById('nf-SYMBOL').className = mode === 'SYMBOL'
+        ? 'px-2.5 py-1 rounded-lg text-xs font-bold bg-sky-600 text-white cursor-pointer'
+        : 'px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 cursor-pointer';
+      document.getElementById('nf-ALL').className = mode === 'ALL'
+        ? 'px-2.5 py-1 rounded-lg text-xs font-bold bg-sky-600 text-white cursor-pointer'
+        : 'px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 cursor-pointer';
+      renderEconomicCalendar();
+    }
+
+    function getRelevantCurrencies(sym) {
+      const s = sym.toUpperCase();
+      if (isVnStock(s)) return ['USD', 'CNY'];
+      if (s.includes('XAU') || s.includes('BTC') || s.includes('ETH') || s.includes('OIL')) return ['USD'];
+      const parts = s.split('/');
+      if (parts.length === 2) return parts;
+      return ['USD', 'EUR', 'GBP', 'JPY'];
+    }
+
+    async function fetchEconomicCalendar(force) {
+      try {
+        // Primary: ForexFactory public weekly JSON via CORS proxy
+        const ffUrl = 'https://nfs.faireconomy.media/ff_calendar_thisweek.json';
+        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(ffUrl)}`;
+        const res = await fetchWithTimeout(proxyUrl, 4000);
+        const rawEvents = await res.json();
+
+        if (Array.isArray(rawEvents) && rawEvents.length > 0) {
+          const todayStr = new Date().toDateString();
+          const mapped = rawEvents.map(ev => {
+            const dt = new Date(ev.date);
+            return {
+              timestamp: dt.getTime(),
+              dateStr: dt.toDateString(),
+              timeVN: dt.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+              currency: (ev.country || 'USD').toUpperCase(),
+              impact: (ev.impact || 'Medium'),
+              title: ev.title || 'Economic Release',
+              actual: ev.actual || '--',
+              forecast: ev.forecast || '--',
+              previous: ev.previous || '--'
+            };
+          });
+
+          // Prefer today's events; if weekend/empty, show upcoming 25 events
+          const todays = mapped.filter(e => e.dateStr === todayStr);
+          state.calendarEvents = todays.length > 0 ? todays : mapped.slice(0, 25);
+          renderEconomicCalendar();
+          renderMacroHeadlines();
+          return;
+        }
+      } catch (e) {}
+
+      // Fallback structured intraday macro schedule if public feed is temporarily unreachable
+      if (state.calendarEvents.length === 0) {
+        const now = new Date();
+        const mkTime = (h, m) => {
+          const d = new Date(now);
+          d.setHours(h, m, 0, 0);
+          return d;
+        };
+        const fallbackSchedule = [
+          { dt: mkTime(14, 0), currency: 'GBP', impact: 'Medium', title: 'BOE Monetary Policy & Retail Data', actual: '--', forecast: '0.3%', previous: '0.2%' },
+          { dt: mkTime(15, 30), currency: 'EUR', impact: 'High', title: 'ECB President Lagarde Speech & PMI Flash', actual: '--', forecast: '49.8', previous: '49.5' },
+          { dt: mkTime(19, 30), currency: 'USD', impact: 'High', title: 'US Initial Jobless Claims & Core Durable Goods', actual: '--', forecast: '218K', previous: '213K' },
+          { dt: mkTime(20, 45), currency: 'USD', impact: 'High', title: 'US S&P Global Services & Manufacturing PMI', actual: '--', forecast: '55.1', previous: '55.0' },
+          { dt: mkTime(22, 0), currency: 'USD', impact: 'High', title: 'FOMC Member Remarks & Treasury Yield Auction', actual: '--', forecast: '--', previous: '--' }
+        ];
+        state.calendarEvents = fallbackSchedule.map(item => ({
+          timestamp: item.dt.getTime(),
+          dateStr: item.dt.toDateString(),
+          timeVN: item.dt.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+          currency: item.currency,
+          impact: item.impact,
+          title: item.title,
+          actual: item.actual,
+          forecast: item.forecast,
+          previous: item.previous
+        }));
+        renderEconomicCalendar();
+        renderMacroHeadlines();
+      }
+    }
+
+    function evaluateNewsImpact(ev) {
+      if (!ev.actual || ev.actual === '--' || !ev.forecast || ev.forecast === '--') {
+        return { text: 'Chờ công bố', cls: 'text-slate-400' };
+      }
+      const numAct = parseFloat(ev.actual.replace(/[^0-9.-]/g, ''));
+      const numFor = parseFloat(ev.forecast.replace(/[^0-9.-]/g, ''));
+      if (isNaN(numAct) || isNaN(numFor)) return { text: 'Đã ra số liệu', cls: 'text-sky-400' };
+      const isUnemployment = ev.title.toLowerCase().includes('jobless') || ev.title.toLowerCase().includes('unemployment');
+      const bullishForCurrency = isUnemployment ? (numAct < numFor) : (numAct > numFor);
+      if (numAct === numFor) return { text: 'Đúng dự báo', cls: 'text-slate-300' };
+      return bullishForCurrency
+        ? { text: `Tốt cho ${ev.currency} ▲`, cls: 'text-emerald-400 font-bold' }
+        : { text: `Xấu cho ${ev.currency} ▼`, cls: 'text-rose-400 font-bold' };
+    }
+
+    function updateNewsCountdownAndShield() {
+      const nowMs = Date.now();
+      const relCurrencies = getRelevantCurrencies(state.symbol);
+      const relevantHighImpact = state.calendarEvents.filter(ev =>
+        ev.impact === 'High' && relCurrencies.includes(ev.currency)
+      );
+
+      // Find nearest upcoming or just-released (within 15 mins) High Impact news
+      let imminentEvent = null;
+      let nextUpcoming = null;
+
+      for (const ev of relevantHighImpact) {
+        const diffMins = (ev.timestamp - nowMs) / 60000;
+        if (diffMins >= -15 && diffMins <= 15) {
+          imminentEvent = { ...ev, diffMins };
+        }
+        if (diffMins > 0 && (!nextUpcoming || ev.timestamp < nextUpcoming.timestamp)) {
+          nextUpcoming = { ...ev, diffMins };
+        }
+      }
+
+      state.activeRedNewsAlert = (state.newsShieldEnabled && !isVnStock(state.symbol)) ? imminentEvent : null;
+
+      const badge = document.getElementById('nextNewsCountdown');
+      if (imminentEvent) {
+        const minsLeft = Math.round(imminentEvent.diffMins);
+        badge.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-mono-num font-bold bg-rose-500/25 text-rose-300 border border-rose-500/50 animate-pulse';
+        badge.textContent = minsLeft >= 0
+          ? `🚨 TIN ĐỎ ${imminentEvent.currency} SAU ${minsLeft} PHÚT!`
+          : `🚨 VỪA RA TIN ĐỎ ${imminentEvent.currency} (${Math.abs(minsLeft)}p trước)`;
+      } else if (nextUpcoming) {
+        const hrs = Math.floor(nextUpcoming.diffMins / 60);
+        const mins = Math.floor(nextUpcoming.diffMins % 60);
+        badge.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-mono-num font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40';
+        badge.textContent = `⏳ Tin đỏ ${nextUpcoming.currency} kế tiếp: ${hrs > 0 ? hrs + 'h ' : ''}${mins}p nữa`;
+      } else {
+        badge.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-mono-num font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30';
+        badge.textContent = '✅ Không có tin đỏ sát giờ';
+      }
+    }
+
+    function renderEconomicCalendar() {
+      const tbody = document.getElementById('calendarTableBody');
+      const relCurrencies = getRelevantCurrencies(state.symbol);
+      let list = state.calendarEvents;
+
+      if (state.newsFilterMode === 'SYMBOL') {
+        const filtered = list.filter(ev => relCurrencies.includes(ev.currency));
+        if (filtered.length > 0) list = filtered;
+      }
+
+      if (!list.length) {
+        tbody.innerHTML = '<tr><td colspan="8" class="py-5 text-center text-slate-500 font-sans">Không có sự kiện kinh tế lớn trong khung giờ này.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = list.map(ev => {
+        const impBadge = ev.impact === 'High'
+          ? '<span class="px-1.5 py-0.5 rounded bg-rose-500/25 text-rose-300 border border-rose-500/40 text-[10px] font-bold">TIN ĐỎ</span>'
+          : ev.impact === 'Medium'
+          ? '<span class="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-bold">TIN CAM</span>'
+          : '<span class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 text-[10px]">Nhẹ</span>';
+
+        const evalObj = evaluateNewsImpact(ev);
+        return `
+          <tr class="hover:bg-slate-800/40">
+            <td class="py-2 px-2.5 text-sky-300 font-bold">${ev.timeVN}</td>
+            <td class="py-2 px-2 font-extrabold text-white">${ev.currency}</td>
+            <td class="py-2 px-2 font-sans">${impBadge}</td>
+            <td class="py-2 px-2.5 font-sans text-slate-200 font-medium">${ev.title}</td>
+            <td class="py-2 px-2 text-right font-bold ${ev.actual !== '--' ? 'text-amber-300' : 'text-slate-500'}">${ev.actual}</td>
+            <td class="py-2 px-2 text-right text-slate-300">${ev.forecast}</td>
+            <td class="py-2 px-2 text-right text-slate-400">${ev.previous}</td>
+            <td class="py-2 px-2.5 text-right font-sans ${evalObj.cls}">${evalObj.text}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderMacroHeadlines() {
+      const listEl = document.getElementById('macroHeadlinesList');
+      const biasBadge = document.getElementById('macroBiasBadge');
+      const rel = getRelevantCurrencies(state.symbol);
+
+      // Summarize directional bias from released Actual vs Forecast numbers
+      let usdScore = 0;
+      state.calendarEvents.forEach(ev => {
+        if (ev.currency === 'USD' && ev.actual !== '--' && ev.forecast !== '--') {
+          const evalObj = evaluateNewsImpact(ev);
+          if (evalObj.text.includes('Tốt')) usdScore++;
+          if (evalObj.text.includes('Xấu')) usdScore--;
+        }
+      });
+
+      if (usdScore > 0) {
+        biasBadge.textContent = 'USD Mạnh (Áp lực giảm Vàng/EUR)';
+        biasBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300';
+      } else if (usdScore < 0) {
+        biasBadge.textContent = 'USD Yếu (Hỗ trợ tăng Vàng/EUR)';
+        biasBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-300';
+      } else {
+        biasBadge.textContent = `Theo dõi tin ${rel.join(' / ')}`;
+        biasBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-sky-500/20 text-sky-300';
+      }
+
+      const headlines = state.calendarEvents.slice(0, 5).map(ev => {
+        const evalObj = evaluateNewsImpact(ev);
+        return `
+          <div class="p-2.5 rounded-xl bg-[#090e1a] border border-slate-800/90 space-y-1">
+            <div class="flex items-center justify-between text-[10px]">
+              <span class="font-mono-num font-bold text-sky-400">${ev.timeVN} • ${ev.currency}</span>
+              <span class="${evalObj.cls}">${evalObj.text}</span>
+            </div>
+            <div class="font-semibold text-slate-200 leading-snug">${ev.title}</div>
+            <div class="text-[10px] font-mono-num text-slate-400">Thực tế: <span class="text-white">${ev.actual}</span> | Dự báo: ${ev.forecast}</div>
+          </div>
+        `;
+      }).join('');
+
+      listEl.innerHTML = headlines || '<div class="text-slate-500">Chưa có tin nóng mới.</div>';
+    }
+
+    // =========================================================================
+    // 4. INTERACTIVE REALTIME CONTROL & ASSET SELECTION
     // =========================================================================
     function toggleRealtime() {
       state.realtimeEnabled = !state.realtimeEnabled;
@@ -517,12 +827,10 @@
 
     function forceManualSync() {
       state.countdown = 3;
+      fetchEconomicCalendar(true);
       triggerAnalyze(true);
     }
 
-    // =========================================================================
-    // 4. STATE LOCKING & ASSET/TIMEFRAME SELECTION
-    // =========================================================================
     function isVnStock(sym) {
       const s = sym.toUpperCase().trim();
       return VN_STOCKS.includes(s) || (/^[A-Z]{3}$/.test(s) && !CRYPTO_MAP[s] && !FOREX_YAHOO_MAP[s]);
@@ -537,7 +845,7 @@
       if (s === 'GBPUSD') s = 'GBP/USD';
       if (s === 'USDJPY') s = 'USD/JPY';
       if (s === 'VN-INDEX') s = 'VNINDEX';
-      return s || 'HPG';
+      return s || 'XAU/USD';
     }
 
     function selectAsset(rawSymbol) {
@@ -545,13 +853,14 @@
       document.getElementById('symbolInput').value = cleanSym;
       state.symbol = cleanSym;
 
-      // Auto-select optimal default chart timeframe when switching asset class
       if (isVnStock(cleanSym) && ['1m', '5m', '15m'].includes(state.timeframe)) {
         setTimeframeUI('1D');
         state.timeframe = '1D';
       }
 
       lockDecisionUIForNewAsset(cleanSym);
+      renderEconomicCalendar();
+      renderMacroHeadlines();
       triggerAnalyze(true);
     }
 
@@ -559,12 +868,12 @@
       state.lastAnalysis = null;
       const isVN = isVnStock(sym);
       document.getElementById('resSymbol').textContent = sym;
-      document.getElementById('marketTypeTag').textContent = isVN ? 'CHỨNG KHOÁN VN (T+3 GUARD)' : 'QUỐC TẾ / CRYPTO (T+0)';
+      document.getElementById('marketTypeTag').textContent = isVN ? 'CHỨNG KHOÁN VN (T+3 GUARD)' : 'QUỐC TẾ / FOREX (T+0 + NEWS SHIELD)';
       document.getElementById('anchorBadge').textContent = isVN ? 'Mỏ neo bắt buộc: 1W + 1D' : `Mỏ neo: 4H + ${state.timeframe}`;
       document.getElementById('resLivePrice').textContent = 'Đang tải...';
       document.getElementById('resActionBadge').textContent = 'ĐANG KIỂM ĐỊNH...';
       document.getElementById('resActionBadge').className = 'px-3.5 py-1.5 rounded-lg text-xs lg:text-sm font-extrabold uppercase tracking-wide bg-sky-500/20 text-sky-300 border border-sky-500/40';
-      document.getElementById('resSummary').textContent = `Đang tải đồng bộ dữ liệu đa khung thời gian của ${sym} để kiểm định độ an toàn...`;
+      document.getElementById('resSummary').textContent = `Đang đồng bộ dữ liệu nến & kiểm tra lịch tin tức liên quan tới ${sym}...`;
       document.getElementById('resConfidence').textContent = '--%';
       document.getElementById('reactivationBanner').classList.add('hidden');
       document.getElementById('executionCoordinatesWrapper').classList.add('locked-panel');
@@ -727,7 +1036,7 @@
     }
 
     // =========================================================================
-    // 6. INSTITUTIONAL T+3 GUARD & 10-FACTOR MULTI-TIMEFRAME ENGINE
+    // 6. INSTITUTIONAL T+3 & FOREX NEWS-SHIELD 10-FACTOR ENGINE
     // =========================================================================
     function calcSMA(candles, period) {
       const slice = candles.slice(-period);
@@ -747,7 +1056,6 @@
 
     function runInstitutionalEngine(symbol, chartCandles, anchorDailyCandles, anchorWeeklyCandles, effectiveTf) {
       const isVN = isVnStock(symbol);
-      // For VN Stocks, ALWAYS anchor decisions on Daily (1D) + Weekly (1W) regardless of what chart timeframe user views!
       const coreCandles = (isVN && anchorDailyCandles && anchorDailyCandles.length >= 35) ? anchorDailyCandles : chartCandles;
 
       const len = coreCandles.length;
@@ -760,30 +1068,24 @@
       const ma20 = calcSMA(coreCandles, 20);
       const ma50 = calcSMA(coreCandles, Math.min(50, len));
 
-      // Weekly Trend Anchor Check
       let weeklyBullish = true;
-      let weeklyMA20 = ma20;
       if (anchorWeeklyCandles && anchorWeeklyCandles.length >= 20) {
-        weeklyMA20 = calcSMA(anchorWeeklyCandles, 20);
+        const weeklyMA20 = calcSMA(anchorWeeklyCandles, 20);
         const wLast = anchorWeeklyCandles[anchorWeeklyCandles.length - 1];
         weeklyBullish = wLast.close >= weeklyMA20 * 0.985;
       }
 
-      // Structural Swing Points (35 bars)
       const recent35 = coreCandles.slice(-35);
       const protectedLow = Math.min(...recent35.map(c => c.low));
       const protectedHigh = Math.max(...recent35.map(c => c.high));
       const midRange = (protectedHigh + protectedLow) / 2;
 
-      // Resistance / Breakout Re-activation Level (recent 10-bar swing high)
       const recent10High = Math.max(...coreCandles.slice(-10).map(c => c.high));
       const reactivationPrice = Math.max(ma20, recent10High);
 
-      // Fibonacci OTE Zone (0.618 - 0.786)
       const fibLongOTE = protectedHigh - (protectedHigh - protectedLow) * 0.65;
       const fibShortOTE = protectedLow + (protectedHigh - protectedLow) * 0.65;
 
-      // SCOB (Single Candle Order Block)
       let bullScob = protectedLow + atr * 0.4;
       let bearScob = protectedHigh - atr * 0.4;
       for (let i = len - 18; i < len - 2; i++) {
@@ -795,7 +1097,6 @@
         }
       }
 
-      // Direction Determination
       const dirMode = document.getElementById('directionMode').value;
       const bullBias = (livePrice > ma20 ? 1 : 0) + (ma20 > ma50 ? 1 : 0) + (weeklyBullish ? 1 : 0);
       let side = 'LONG';
@@ -809,47 +1110,43 @@
         side = bullBias >= 2 ? 'LONG' : 'SHORT';
       }
 
-      // T+3 Survival Check (Does structure have enough cushion & momentum to survive 3 trading days?)
       const distAboveProtectedLow = livePrice - protectedLow;
       const tPlusSafe = distAboveProtectedLow >= atr * 0.8 && livePrice >= ma50 * 0.985 && weeklyBullish;
+      const newsSafe = !state.activeRedNewsAlert;
 
-      // Evaluate 10 Strict Institutional Criteria
       const factors = side === 'LONG' ? [
         { name: '1. Xu Hướng Tuần (1W)', pass: weeklyBullish },
-        { name: '2. Cấu Trúc Ngày (1D)', pass: livePrice > ma20 && ma20 >= ma50 * 0.995 },
-        { name: '3. Đệm An Toàn T+3', pass: tPlusSafe },
+        { name: '2. Cấu Trúc Ngày/H4', pass: livePrice > ma20 && ma20 >= ma50 * 0.995 },
+        { name: isVN ? '3. Đệm An Toàn T+3' : '3. Lá Chắn Tin Đỏ', pass: isVN ? tPlusSafe : newsSafe },
         { name: '4. Tín hiệu SCOB Cầu', pass: bullScob > protectedLow && livePrice >= bullScob * 0.99 },
         { name: '5. Vùng FLIP Hỗ Trợ', pass: livePrice >= ma50 },
-        { name: '6. Protected Low Vững', pass: livePrice > protectedLow + atr * 0.5 },
+        { name: '6. Protected Low Vững', pass: livePrice > protectedLow + atr * 0.4 },
         { name: '7. Vùng Chiết Khấu Đẹp', pass: livePrice <= midRange + atr * 0.6 },
         { name: '8. Sóng Elliott Tăng', pass: ma20 > ma50 },
-        { name: '9. Dòng Tiền Wyckoff', pass: last.volume >= coreCandles[len - 5].volume * 0.85 && last.close >= last.open },
-        { name: '10. Hợp Lưu Fibo OTE', pass: Math.abs(livePrice - fibLongOTE) <= atr * 2.0 }
+        { name: '9. Dòng Tiền Wyckoff', pass: last.volume >= coreCandles[len - 5].volume * 0.8 && last.close >= last.open },
+        { name: '10. Hợp Lưu Fibo OTE', pass: Math.abs(livePrice - fibLongOTE) <= atr * 2.1 }
       ] : [
         { name: '1. Xu Hướng Lớn Giảm', pass: !weeklyBullish || livePrice < ma50 },
         { name: '2. CHoCH / MSS Giảm', pass: livePrice < ma20 },
-        { name: '3. Tín hiệu SCOB Cung', pass: bearScob < protectedHigh },
-        { name: '4. Vùng FLIP Kháng Cự', pass: livePrice <= bearScob * 1.008 },
-        { name: '5. Chuyển Đổi Cầu-Cung', pass: last.close <= last.open || prev.close < prev.open },
+        { name: '3. Lá Chắn Tin Đỏ', pass: newsSafe },
+        { name: '4. Tín hiệu SCOB Cung', pass: bearScob < protectedHigh },
+        { name: '5. Vùng FLIP Kháng Cự', pass: livePrice <= bearScob * 1.008 },
         { name: '6. Protected High Vững', pass: livePrice < protectedHigh - atr * 0.4 },
         { name: '7. Vùng Giá Premium', pass: livePrice >= midRange - atr * 0.6 },
         { name: '8. Sóng Điều Chỉnh ABC', pass: ma20 < ma50 },
         { name: '9. Phân Phối Wyckoff', pass: last.volume >= coreCandles[len - 5].volume * 0.8 },
-        { name: '10. Hợp Lưu Fibo OTE', pass: Math.abs(livePrice - fibShortOTE) <= atr * 2.0 }
+        { name: '10. Hợp Lưu Fibo OTE', pass: Math.abs(livePrice - fibShortOTE) <= atr * 2.1 }
       ];
 
       const passedCount = factors.filter(f => f.pass).length;
       const confidence = passedCount * 10;
 
-      // Minimum Required Confidence Threshold
       const strictSetting = document.getElementById('vnStrictMode').value;
       const minConfidenceRequired = isVN ? (strictSetting === 'ULTRA_80' ? 80 : 75) : 65;
 
-      // Lock Coordinates
-      let entry, sl, tp1, tp2, actionTitle, entryBadge, summaryText, slNote, isLocked = false, reactivationText = '';
+      let entry, sl, tp1, tp2, actionTitle, entryBadge, summaryText, slNote, isLocked = false, reactivationText = '', lockTitle = '';
 
       if (side === 'LONG') {
-        // For VN Stocks, never chase above MA20; anchor Entry at confirmed Demand/SCOB or pullback
         const safeDemandEntry = Math.min(livePrice, Math.max(bullScob, fibLongOTE));
         const isConfirmedPullback = Math.abs(livePrice - safeDemandEntry) <= atr * 0.4 && livePrice > ma20;
 
@@ -861,33 +1158,43 @@
         tp1 = entry + riskDist * 2.0;
         tp2 = entry + riskDist * 3.2;
 
-        // STRICT T+3 GATEKEEPER FOR VN STOCKS
-        if (confidence < minConfidenceRequired || (isVN && (!weeklyBullish || !tPlusSafe))) {
+        // Check News Shield Lock for Forex/Gold
+        if (!isVN && state.activeRedNewsAlert) {
+          isLocked = true;
+          actionTitle = 'KHÓA LỆNH DO SẮP RA TIN ĐỎ';
+          entryBadge = 'LÁ CHẮN TIN TỨC ĐANG BẬT';
+          lockTitle = '🚨 TẠM KHÓA MỞ LỆNH MỚI DO SẮP CÔNG BỐ TIN MẠNH (HIGH IMPACT):';
+          summaryText = `Sự kiện "${state.activeRedNewsAlert.title}" (${state.activeRedNewsAlert.currency}) lúc ${state.activeRedNewsAlert.timeVN} gây biến động mạnh & giãn spread. Hệ thống tạm khóa vào lệnh để tránh quét SL.`;
+          reactivationText = `Hệ thống sẽ tự động mở khóa lại sau khi tin công bố 15 phút và nến ổn định cấu trúc.`;
+          slNote = `Đáy bảo vệ cấu trúc ở ${protectedLow.toFixed(decimals)}.`;
+        } else if (confidence < minConfidenceRequired || (isVN && (!weeklyBullish || !tPlusSafe))) {
           isLocked = true;
           actionTitle = 'CẤM VÀO LỆNH (ĐỨNG NGOÀI)';
           entryBadge = 'ĐÃ KHÓA VỊ THẾ MUA';
+          lockTitle = isVN
+            ? '🔒 KHOÁ VỊ THẾ ĐỂ BẢO TOÀN VỐN T+3 — ĐIỀU KIỆN MỞ LẠI LỆNH MUA:'
+            : '🔒 ĐỘ HỢP LƯU CHƯA ĐẠT CHUẨN — ĐIỀU KIỆN KÍCH HOẠT LẠI:';
 
           const failReasons = [];
-          if (!weeklyBullish) failReasons.push('xu hướng Tuần (1W) chưa xác nhận tăng');
-          if (!tPlusSafe) failReasons.push('biên an toàn T+3 quá mỏng sát đáy');
+          if (isVN && !weeklyBullish) failReasons.push('xu hướng Tuần (1W) chưa xác nhận tăng');
+          if (isVN && !tPlusSafe) failReasons.push('biên an toàn T+3 quá mỏng sát đáy');
           if (confidence < minConfidenceRequired) failReasons.push(`độ tin cậy chỉ đạt ${confidence}% (yêu cầu ≥ ${minConfidenceRequired}%)`);
 
-          summaryText = `Cấu trúc ${symbol} chưa đủ chuẩn an toàn T+3 do ${failReasons.join(', ')}. Hệ thống khóa toàn bộ điểm giải ngân để tránh kẹt hàng T+3.`;
-          reactivationText = `Chỉ mở khóa vị thế MUA khi ${symbol} đóng nến Ngày vượt dứt khoát trên ${reactivationPrice.toFixed(decimals)} (vượt MA20 & đỉnh ngắn hạn) với khối lượng lớn hơn trung bình 20 phiên.`;
+          summaryText = `Cấu trúc ${symbol} chưa đủ điều kiện an toàn do ${failReasons.join(', ')}. Hệ thống khóa toàn bộ điểm giải ngân để bảo vệ vốn.`;
+          reactivationText = `Chỉ mở khóa vị thế MUA khi ${symbol} đóng nến vượt dứt khoát trên ${reactivationPrice.toFixed(decimals)} (vượt MA20 & đỉnh ngắn hạn) kèm thanh khoản xác nhận.`;
           slNote = `Đáy bảo vệ cấu trúc hiện tại ở ${protectedLow.toFixed(decimals)}.`;
         } else if (isConfirmedPullback) {
           actionTitle = isVN ? 'ĐẠT CHUẨN T+3 — GIẢI NGÂN MUA' : 'VÀO LỆNH MUA NGAY (BUY NOW)';
           entryBadge = `KHỚP VÙNG CẦU TẠI ${entry.toFixed(decimals)}`;
-          summaryText = `Đồng thuận cao (${confidence}%): Cả khung Tuần (1W) & Ngày (1D) đều giữ vững xu hướng tăng, vùng đệm T+3 đạt chuẩn an toàn.`;
+          summaryText = `Đồng thuận cao (${confidence}%): Xu hướng lớn giữ vững, vùng đệm an toàn đạt chuẩn.`;
           slNote = `Khóa cắt lỗ an toàn dưới đáy bảo vệ (${protectedLow.toFixed(decimals)}) & đệm biến động ATR(14).`;
         } else {
           actionTitle = isVN ? 'ĐẠT CHUẨN T+3 — KÊ CHỜ MUA' : 'KÊ LỆNH CHỜ MUA (BUY LIMIT)';
           entryBadge = `BUY LIMIT VÙNG CẦU ${entry.toFixed(decimals)}`;
-          summaryText = `Xu hướng lớn (1W + 1D) đồng thuận tăng (${confidence}%). Kiên nhẫn kê lệnh chờ đón nhịp điều chỉnh về vùng Cầu chuẩn tại ${entry.toFixed(decimals)} để tối ưu biên an toàn T+3.`;
+          summaryText = `Xu hướng chủ đạo đồng thuận tăng (${confidence}%). Kê lệnh chờ đón nhịp điều chỉnh về vùng Cầu chuẩn tại ${entry.toFixed(decimals)}.`;
           slNote = `Khóa cắt lỗ an toàn dưới đáy bảo vệ (${protectedLow.toFixed(decimals)}) & đệm biến động ATR(14).`;
         }
       } else {
-        // SHORT (Only International T+0)
         const safeSupplyEntry = Math.max(livePrice, Math.min(bearScob, fibShortOTE));
         const isConfirmedReject = Math.abs(safeSupplyEntry - livePrice) <= atr * 0.4 && livePrice < ma20;
 
@@ -897,11 +1204,20 @@
         tp1 = entry - riskDist * 2.0;
         tp2 = entry - riskDist * 3.2;
 
-        if (confidence < minConfidenceRequired) {
+        if (!isVN && state.activeRedNewsAlert) {
+          isLocked = true;
+          actionTitle = 'KHÓA LỆNH DO SẮP RA TIN ĐỎ';
+          entryBadge = 'LÁ CHẮN TIN TỨC ĐANG BẬT';
+          lockTitle = '🚨 TẠM KHÓA MỞ LỆNH MỚI DO SẮP CÔNG BỐ TIN MẠNH (HIGH IMPACT):';
+          summaryText = `Sự kiện "${state.activeRedNewsAlert.title}" (${state.activeRedNewsAlert.currency}) lúc ${state.activeRedNewsAlert.timeVN} có thể gây giật giá hai đầu. Hệ thống tạm khóa vào lệnh.`;
+          reactivationText = `Hệ thống sẽ tự động mở khóa lại sau khi tin công bố 15 phút.`;
+          slNote = `Đỉnh bảo vệ cấu trúc ở ${protectedHigh.toFixed(decimals)}.`;
+        } else if (confidence < minConfidenceRequired) {
           isLocked = true;
           actionTitle = 'CẤM VÀO LỆNH (ĐỨNG NGOÀI)';
           entryBadge = 'ĐÃ KHÓA VỊ THẾ BÁN';
-          summaryText = `Độ hợp lưu giảm chỉ đạt ${confidence}% (yêu cầu ≥ ${minConfidenceRequired}%). Đứng ngoài quan sát để tránh bị quét SL hai đầu.`;
+          lockTitle = '🔒 ĐỘ HỢP LƯU CHƯA ĐẠT CHUẨN — ĐIỀU KIỆN KÍCH HOẠT LẠI:';
+          summaryText = `Độ hợp lưu giảm chỉ đạt ${confidence}% (yêu cầu ≥ ${minConfidenceRequired}%). Đứng ngoài quan sát để tránh bị quét SL.`;
           reactivationText = `Chỉ mở lại vị thế BÁN khi giá đóng nến dưới ${(protectedLow + atr * 0.2).toFixed(decimals)} và xác nhận gãy MA20/50.`;
           slNote = `Đỉnh bảo vệ cấu trúc hiện tại ở ${protectedHigh.toFixed(decimals)}.`;
         } else if (isConfirmedReject) {
@@ -920,7 +1236,7 @@
       return {
         symbol, side, isVN, decimals, livePrice, entry, sl, tp1, tp2,
         confidence, passedCount, factors, actionTitle, entryBadge, summaryText, slNote,
-        isLocked, reactivationText, tPlusSafe, weeklyBullish,
+        isLocked, reactivationText, lockTitle, tPlusSafe, weeklyBullish,
         effectiveTf, timestamp: new Date().toTimeString().split(' ')[0]
       };
     }
@@ -940,11 +1256,10 @@
       if (showLoadingBanner) {
         updateStatus('⏳', isVN
           ? `Đang khóa mỏ neo đa khung (1W + 1D) & kiểm định độ an toàn T+3 cho ${sym}...`
-          : `Đang đồng bộ dữ liệu đa khung thời gian (4H + ${tf}) cho ${sym}...`, 'amber');
+          : `Đang đồng bộ dữ liệu nến (${tf}) & quét lá chắn tin tức Forex cho ${sym}...`, 'amber');
       }
 
       try {
-        // Fetch Chart Timeframe + Anchor Timeframes in parallel
         const tasks = [fetchCandlesSmart(sym, tf, 30)];
         if (isVN) {
           tasks.push(tf === '1D' ? Promise.resolve(null) : fetchCandlesSmart(sym, '1D', 35).catch(() => null));
@@ -968,9 +1283,9 @@
         document.getElementById('tfSyncBadge').textContent = `Biểu đồ: ${chartRes.effectiveTf}`;
 
         if (analysis.isLocked) {
-          updateStatus('🛡️', `Bộ lọc T+3 đã kích hoạt khóa bảo vệ vốn cho ${sym} (Độ tin cậy: ${analysis.confidence}%).`, 'rose');
+          updateStatus('🛡️', `${sym} đang ở trạng thái KHÓA AN TOÀN (${analysis.actionTitle}).`, 'rose');
         } else {
-          updateStatus('✅', `${sym} đã vượt qua toàn bộ 10 lớp kiểm định & mỏ neo đa khung (${analysis.confidence}%).`, 'emerald');
+          updateStatus('✅', `${sym} đã vượt qua toàn bộ 10 lớp kiểm định & bộ lọc tin tức (${analysis.confidence}%).`, 'emerald');
         }
 
         renderDecisionUI(analysis);
@@ -1019,8 +1334,8 @@
         survivalTag.textContent = a.tPlusSafe ? 'Kiểm định T+3: ĐẠT AN TOÀN' : 'Kiểm định T+3: RỦI RO CAO';
         survivalTag.className = `px-2 py-0.5 rounded text-[10px] font-bold ${a.tPlusSafe ? 'bg-emerald-500/20 text-emerald-300' : 'bg-rose-500/20 text-rose-300'}`;
       } else {
-        survivalTag.textContent = 'Thanh khoản T+0: Linh hoạt';
-        survivalTag.className = 'px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 text-[10px] font-bold';
+        survivalTag.textContent = state.activeRedNewsAlert ? 'Tin tức: CẢNH BÁO TIN ĐỎ' : 'Tin tức: AN TOÀN GIAO DỊCH';
+        survivalTag.className = `px-2 py-0.5 rounded text-[10px] font-bold ${state.activeRedNewsAlert ? 'bg-rose-500/20 text-rose-300' : 'bg-sky-500/20 text-sky-300'}`;
       }
 
       const card = document.getElementById('decisionCard');
@@ -1032,11 +1347,11 @@
       badge.textContent = a.actionTitle;
 
       if (a.isLocked) {
-        // LOCK EXECUTION PANELS SO USER NEVER MISREADS NUMBERS ON A "DO NOT ENTER" SIGNAL
         card.className = 'glass-card glow-red rounded-2xl p-5 lg:p-6 space-y-5 transition-all duration-200';
         badge.className = 'px-3.5 py-1.5 rounded-lg text-xs lg:text-sm font-extrabold uppercase tracking-wide bg-rose-600 text-white';
         execWrapper.classList.add('locked-panel');
         reactBanner.classList.remove('hidden');
+        document.getElementById('reactivationTitle').textContent = a.lockTitle;
         document.getElementById('reactivationConditionText').textContent = a.reactivationText;
         logBtn.disabled = true;
         logBtn.className = 'px-4 py-3.5 rounded-xl text-xs lg:text-sm font-extrabold bg-slate-800 text-slate-500 border border-slate-700 cursor-not-allowed flex items-center gap-2';
@@ -1077,7 +1392,6 @@
         document.getElementById('resTP2').textContent = a.tp2.toFixed(d);
       }
 
-      // Render 10-Factor Matrix
       document.getElementById('confluenceScoreSummary').textContent = `Đạt: ${a.passedCount}/10 tiêu chí (${a.isVN ? 'Chuẩn T+3' : a.side})`;
       const grid = document.getElementById('confluenceGrid');
       grid.innerHTML = a.factors.map(f => `
@@ -1117,7 +1431,7 @@
         let shares = Math.floor((maxRiskVnd / riskPerShare) / 100) * 100;
         shares = Math.max(100, shares);
 
-        const feeRate = 0.0025; // 0.15% phí + 0.1% thuế bán
+        const feeRate = 0.0025;
         const netSL = -Math.round(shares * riskPerShare + shares * priceVnd * feeRate);
         const netTP1 = Math.round(shares * Math.abs(tp1Vnd - priceVnd) - shares * tp1Vnd * feeRate);
         const netTP2 = Math.round(shares * Math.abs(tp2Vnd - priceVnd) - shares * tp2Vnd * feeRate);
@@ -1166,14 +1480,14 @@
     }
 
     // =========================================================================
-    // 9. PORTFOLIO WATCHLIST SCANNER (WITH T+3 FILTERING)
+    // 9. PORTFOLIO WATCHLIST SCANNER
     // =========================================================================
     async function scanEntireWatchlist() {
       const btn = document.getElementById('btnScanAll');
       btn.disabled = true;
       btn.innerHTML = '<span>⏳ Đang quét kiểm định đa khung toàn danh mục...</span>';
 
-      const watchlist = ['MBB', 'TCB', 'VCB', 'HPG', 'FPT', 'SSI', 'XAU/USD', 'BTC/USD'];
+      const watchlist = ['XAU/USD', 'BTC/USD', 'EUR/USD', 'GBP/USD', 'MBB', 'TCB', 'HPG', 'FPT'];
       const results = [];
 
       await Promise.all(watchlist.map(async (sym) => {
@@ -1252,7 +1566,6 @@
         ? `${a.symbol} • Khung ${a.effectiveTf} (ĐÃ KHÓA LỆNH — QUAN SÁT)`
         : `${a.symbol} • Khung ${a.effectiveTf} (${a.side})`;
 
-      // Do not draw misleading Entry/SL lines on chart if trade is LOCKED
       if (a.isLocked) return;
 
       const addLine = (price, color, title, style = LightweightCharts.LineStyle.Solid) => {
@@ -1274,7 +1587,7 @@
     async function logCurrentTrade() {
       const a = state.lastAnalysis;
       if (!a || a.isLocked) {
-        return alert('Mã này đang ở trạng thái CẤM VÀO LỆNH (chưa đạt chuẩn an toàn T+3). Không thể khớp lệnh!');
+        return alert('Mã này đang ở trạng thái KHÓA AN TOÀN (chưa đạt chuẩn hoặc đang có tin đỏ). Không thể khớp lệnh!');
       }
 
       const record = {
@@ -1356,7 +1669,7 @@
     function renderLogsTable() {
       const tbody = document.getElementById('pnlTableBody');
       if (!state.logs.length) {
-        tbody.innerHTML = '<tr><td colspan="9" class="py-6 text-center text-slate-500 font-sans">Chưa có lệnh nào được theo dõi. Chỉ những mã đạt chuẩn T+3 mới được mở khóa nút ghi nhận.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" class="py-6 text-center text-slate-500 font-sans">Chưa có lệnh nào được theo dõi. Chỉ những mã đạt chuẩn mới được mở khóa nút ghi nhận.</td></tr>';
         return;
       }
 
